@@ -1720,14 +1720,14 @@
     string.prototype.matchall "^4.0.6"
 
 "@types/autosize@^4.0.0":
-  version "4.0.1"
-  resolved "https://registry.yarnpkg.com/@types/autosize/-/autosize-4.0.1.tgz#999a7c305b96766248044ebaac1a0299961f3b61"
-  integrity sha512-iPJT/FCaSO79G6j+9n6gmFc5nhxZ1gDrA2UAvb5FslJ6FJQZnDfbBU0qp5vpp0Cbjj7+gOyjuWZ7RrXvRuETaA==
+  version "4.0.2"
+  resolved "https://registry.yarnpkg.com/@types/autosize/-/autosize-4.0.2.tgz#eee1e5e8b4d5078e062039bd77316bab62b63bf2"
+  integrity sha512-wm2fxJhRH3yOJ2GsqWG2q27HcqhWXjeWPLO6o1RiNCITOASyyK0s8xtrW7xsKFCyXF5L1AI2LbElax/HlCk92w==
 
 "@types/body-parser@*":
-  version "1.19.2"
-  resolved "https://registry.yarnpkg.com/@types/body-parser/-/body-parser-1.19.2.tgz#aea2059e28b7658639081347ac4fab3de166e6f0"
-  integrity sha512-ALYone6pm6QmwZoAgeyNksccT9Q4AWZQ6PvfwR37GT6r6FWUPguq6sUmNGSMV2Wr761oQoBxwGGa6DR5o1DC9g==
+  version "1.19.4"
+  resolved "https://registry.yarnpkg.com/@types/body-parser/-/body-parser-1.19.4.tgz#78ad68f1f79eb851aa3634db0c7f57f6f601b462"
+  integrity sha512-N7UDG0/xiPQa2D/XrVJXjkWbpqHCd2sBaB32ggRF2l83RhPfamgKGF8gwwqyksS95qUS5ZYF9aF+lLPRlwI2UA==
   dependencies:
     "@types/connect" "*"
     "@types/node" "*"
