@@ -1952,14 +1952,14 @@
     "@types/node" "*"
 
 "@types/serialize-javascript@^5.0.1":
-  version "5.0.2"
-  resolved "https://registry.yarnpkg.com/@types/serialize-javascript/-/serialize-javascript-5.0.2.tgz#c4b29f763e407def2502c9dfcc0b8c4c96ef0387"
-  integrity sha512-BRLlwZzRoZukGaBtcUxkLsZsQfWZpvog6MZk3PWQO9Q6pXmXFzjU5iGzZ+943evp6tkkbN98N1Z31KT0UG1yRw==
+  version "5.0.3"
+  resolved "https://registry.yarnpkg.com/@types/serialize-javascript/-/serialize-javascript-5.0.3.tgz#daee5bc238195d2db6f0bb3a6e99b0ccb2448bfc"
+  integrity sha512-jz2WlMFHH85UD+SH9soACEO7v4I6kThWb7RcbT6aSCJ4hXsxOwZxwFkmXCC2ZpIjzaRKRfxVw+DvRtvqE8Ntig==
 
 "@types/serve-index@^1.9.1":
-  version "1.9.1"
-  resolved "https://registry.yarnpkg.com/@types/serve-index/-/serve-index-1.9.1.tgz#1b5e85370a192c01ec6cec4735cf2917337a6278"
-  integrity sha512-d/Hs3nWDxNL2xAczmOVZNj92YZCS6RGxfBPjKzuu/XirCgXdpKEb88dYNbrYGint6IVWLNP+yonwVAuRC0T2Dg==
+  version "1.9.3"
+  resolved "https://registry.yarnpkg.com/@types/serve-index/-/serve-index-1.9.3.tgz#af9403916eb6fbf7d6ec6f47b2a4c46eb3222cc9"
+  integrity sha512-4KG+yMEuvDPRrYq5fyVm/I2uqAJSAwZK9VSa+Zf+zUq9/oxSSvy3kkIqyL+jjStv6UCVi8/Aho0NHtB1Fwosrg==
   dependencies:
     "@types/express" "*"
 
