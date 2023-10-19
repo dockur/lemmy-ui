@@ -31,7 +31,7 @@ COPY package.json yarn.lock ./
 
 RUN sed -i 's|"sharp": "^0.32.4"|"sharp": "^0.32.6"|g' package.json
 
-RUN yarn --production --prefer-offline --pure-lockfile
+RUN yarn --production --prefer-offline --pure-lockfile --network-timeout 100000
 
 # Build
 COPY generate_translations.js \
@@ -47,7 +47,7 @@ COPY .git .git
 # Set UI version 
 RUN echo "export const VERSION = '$(git describe --tag)';" > "src/shared/version.ts"
 
-RUN yarn --production --prefer-offline
+RUN yarn --production --prefer-offline --network-timeout 100000
 RUN yarn build:prod
 
 # Prune the image
