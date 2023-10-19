@@ -117,7 +117,8 @@ jobs:
           echo "Build date: ${{ steps.prepare.outputs.build_date }}"
           echo "Docker platform: ${{ steps.prepare.outputs.docker_platforms }}"
           echo "Tags: ${TAGS}"
-          
+
+          cd lemmy-ui
           docker buildx build --platform ${{ steps.prepare.outputs.docker_platforms }} \
             --output "type=image,push=true" \
             --progress=plain \
