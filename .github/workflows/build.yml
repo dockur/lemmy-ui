@@ -65,7 +65,9 @@ jobs:
           git clone --recurse-submodules -j8 https://github.com/lemmynet/lemmy-ui.git --single-branch --branch ${{ steps.prepare.outputs.version }}
           cp Dockerfile.aarch64 lemmy-ui/Dockerfile
           cp .dockerignore lemmy-ui/
+          cat lemmy-ui/src/shared/components/app/footer.tsx
           cp src/shared/components/app/footer.tsx lemmy-ui/src/shared/components/app/footer.tsx
+          cat lemmy-ui/src/shared/components/app/footer.tsx
       -
         name: Login into Docker Hub
         if: env.exists == 'false'
