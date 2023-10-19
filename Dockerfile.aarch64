@@ -79,4 +79,18 @@ USER node
 EXPOSE 1234
 WORKDIR /app
 
+ARG DATE_ARG=""
+ARG BUILD_ARG=0
+ARG VERSION_ARG=0
+ENV VERSION=$VERSION_ARG
+
+LABEL org.opencontainers.image.title="Lemmy UI"
+LABEL org.opencontainers.image.licenses="AGPL-3.0"
+LABEL org.opencontainers.image.created=${DATE_ARG}
+LABEL org.opencontainers.image.revision=${BUILD_ARG}
+LABEL org.opencontainers.image.version=${VERSION_ARG}
+LABEL org.opencontainers.image.source="https://github.com/dockur/lemmy-ui/"
+LABEL org.opencontainers.image.url="https://hub.docker.com/r/dockurr/lemmy-ui/"
+LABEL org.opencontainers.image.description="The official web app for Lemmy"
+
 CMD exec node dist/js/server.js
