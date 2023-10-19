@@ -1980,19 +1980,19 @@
     "@types/node" "*"
 
 "@types/toastify-js@^1.12.0":
-  version "1.12.0"
-  resolved "https://registry.yarnpkg.com/@types/toastify-js/-/toastify-js-1.12.0.tgz#e3278196e040d6da82d84babee31af8e97abba56"
-  integrity sha512-fqpDHaKhFukN9KRm24bbH0wozvHmSwjvkaLjBUrWcSfSS4zysIwTYqNLG3XbSNhRlsTNRNLGS23tp/VhPwsfHQ==
+  version "1.12.2"
+  resolved "https://registry.yarnpkg.com/@types/toastify-js/-/toastify-js-1.12.2.tgz#09d0604937a83b476b642eadcef57f58512e80d9"
+  integrity sha512-wA0+1kG5Td0O7B/+ahHJgz5ZRFTYGNp8DmZ2z9LPm56+OrSikcfdqggtIlmbWKAssGgSR5sdyQaDyMoprvfNdA==
 
 "@types/trusted-types@^2.0.2":
-  version "2.0.3"
-  resolved "https://registry.yarnpkg.com/@types/trusted-types/-/trusted-types-2.0.3.tgz#a136f83b0758698df454e328759dbd3d44555311"
-  integrity sha512-NfQ4gyz38SL8sDNrSixxU2Os1a5xcdFxipAFxYEuLUlvU2uDwS4NUpsImcf1//SlWItCVMMLiylsxbmNMToV/g==
+  version "2.0.5"
+  resolved "https://registry.yarnpkg.com/@types/trusted-types/-/trusted-types-2.0.5.tgz#5cac7e7df3275bb95f79594f192d97da3b4fd5fe"
+  integrity sha512-I3pkr8j/6tmQtKV/ZzHtuaqYSQvyjGRKH4go60Rr0IDLlFxuRT5V32uvB1mecM5G1EVAUyF/4r4QZ1GHgz+mxA==
 
 "@types/ws@^8.5.5":
-  version "8.5.5"
-  resolved "https://registry.yarnpkg.com/@types/ws/-/ws-8.5.5.tgz#af587964aa06682702ee6dcbc7be41a80e4b28eb"
-  integrity sha512-lwhs8hktwxSjf9UaZ9tG5M03PGogvFaH8gUgLNbN9HKIg0dvv6q+gkSuJ8HN4/VbyxkuLzCjlN7GquQ0gUJfIg==
+  version "8.5.8"
+  resolved "https://registry.yarnpkg.com/@types/ws/-/ws-8.5.8.tgz#13efec7bd439d0bdf2af93030804a94f163b1430"
+  integrity sha512-flUksGIQCnJd6sZ1l5dqCEG/ksaoAg/eUwiLAGTJQcfgvZJKF++Ta4bJA6A5aPSJmsr+xlseHn4KLgVlNnvPTg==
   dependencies:
     "@types/node" "*"
 
