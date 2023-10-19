@@ -7,5 +7,6 @@
       "description": "Keep package.json npm dependencies updated",
       "npm": {
         "enabled": false
+       }
     }  
 }
