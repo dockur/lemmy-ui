@@ -65,9 +65,7 @@ jobs:
           git clone --recurse-submodules -j8 https://github.com/lemmynet/lemmy-ui.git --single-branch --branch ${{ steps.prepare.outputs.version }}
           cp Dockerfile.aarch64 lemmy-ui/Dockerfile
           cp .dockerignore lemmy-ui/
-          cat lemmy-ui/src/shared/components/app/footer.tsx
           cp src/shared/components/app/footer.tsx lemmy-ui/src/shared/components/app/footer.tsx
-          cat lemmy-ui/src/shared/components/app/footer.tsx
       -
         name: Login into Docker Hub
         if: env.exists == 'false'
@@ -93,7 +91,8 @@ jobs:
           echo "Build date: ${{ steps.prepare.outputs.build_date }}"
           echo "Docker platform: ${{ steps.prepare.outputs.docker_platforms }}"
           echo "Tags: ${{ steps.prepare.outputs.tags }}"
-          
+
+          cd lemmy-ui
           docker buildx build --platform ${{ steps.prepare.outputs.docker_platforms }} \
             --output "type=image,push=true" \
             --progress=plain \
@@ -101,7 +100,7 @@ jobs:
             --build-arg "VERSION_ARG=${{ steps.prepare.outputs.version }}" \
             --build-arg "DATE_ARG=${{ steps.prepare.outputs.build_date }}" \
             --build-arg "VCS_REF=${GITHUB_SHA::8}" \
-            $(printf "%s" "${TAGS[@]/#/ --tag }" ) lemmy-ui/.
+            $(printf "%s" "${TAGS[@]/#/ --tag }" ) .
       -
         name: Clear Docker credentials
         if: env.exists == 'false'
