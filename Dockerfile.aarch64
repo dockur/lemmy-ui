@@ -69,7 +69,8 @@ FROM node:alpine as runner
 RUN echo "https://dl-cdn.alpinelinux.org/alpine/edge/main" > /etc/apk/repositories && \
     echo "https://dl-cdn.alpinelinux.org/alpine/edge/community" >> /etc/apk/repositories
 
-RUN apk update && apk upgrade && apk add vips-cpp
+RUN apk update && apk upgrade && apk add wget vips-cpp
+
 COPY --from=builder /usr/src/app/dist /app/dist
 COPY --from=builder /usr/src/app/node_modules /app/node_modules
 
@@ -92,5 +93,7 @@ LABEL org.opencontainers.image.version=${VERSION_ARG}
 LABEL org.opencontainers.image.source="https://github.com/dockur/lemmy-ui/"
 LABEL org.opencontainers.image.url="https://hub.docker.com/r/dockurr/lemmy-ui/"
 LABEL org.opencontainers.image.description="The official web app for Lemmy"
+
+HEALTHCHECK --interval=60s --retries=2 --timeout=10s CMD wget -nv -t1 --spider 'http://localhost:1234/' || exit 1
 
 CMD exec node dist/js/server.js
