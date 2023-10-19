@@ -22,6 +22,7 @@ jobs:
         run: |
           #!/bin/bash
           latest_tag=$(curl -s https://api.github.com/repos/lemmynet/lemmy-ui/git/matching-refs/tags/0.1 -s | jq '.[-1].ref' -r | sed 's#.*/##')
+          latest_tag="0.19.0-beta.8"
           echo "latest_tag=$latest_tag" >> $GITHUB_ENV
       - 
         name: Check if the new tag exists in DockerHub
