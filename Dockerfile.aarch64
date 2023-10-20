@@ -6,7 +6,7 @@ RUN cd /app && \
   cd /app/node-prune && \
   CGO_ENABLED=0 go build
 
-FROM node:20-alpine as runner
+FROM node:20-alpine as builder
 
 # Upgrade to edge to fix sharp/libvips issues
 RUN echo "https://dl-cdn.alpinelinux.org/alpine/edge/main" > /etc/apk/repositories && \
