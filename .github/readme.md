@@ -29,8 +29,6 @@ services:
       - LEMMY_UI_LEMMY_EXTERNAL_HOST=domain.tld
     ports:
       - 1234:1234
-    volumes:
-      - /path/to/extra_themes:/app/extra_themes
     restart: on-failure
     stop_grace_period: 1m
 ```
