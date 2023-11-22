@@ -75,9 +75,9 @@ jobs:
           
           TAGS=()
           TAGS=("${{ secrets.DOCKERHUB_REPO }}:${{ env.latest_tag }}")
-          [[ !IS_BETA ]] && TAGS+=("${{ secrets.DOCKERHUB_REPO }}:latest")
+          [[ ! $IS_BETA ]] && TAGS+=("${{ secrets.DOCKERHUB_REPO }}:latest")
           TAGS+=("ghcr.io/${{ github.repository }}:${{ env.latest_tag }}")
-          [[ !IS_BETA ]] && TAGS+=("ghcr.io/${{ github.repository }}:latest")
+          [[ ! $IS_BETA ]] && TAGS+=("ghcr.io/${{ github.repository }}:latest")
           
           echo "tags=${TAGS[@]}" >> $GITHUB_OUTPUT
           echo "version=${{ env.latest_tag }}" >> $GITHUB_OUTPUT
