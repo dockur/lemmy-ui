@@ -37,6 +37,7 @@ jobs:
           [ -z "$latest_tag" ] && echo "Tag not found!" && exit 1
           [[ "$latest_tag" = v* ]] && latest_tag="${latest_tag:1}"
           echo "Found tag: \"${latest_tag}\"" 
+          [[ "${latest_tag,,}" == *"alpha"* ]] && latest_tag=""
           echo "latest_tag=$latest_tag" >> $GITHUB_ENV
       - 
         name: Check if the tag exists in DockerHub
@@ -67,11 +68,16 @@ jobs:
 
           PLATFORMS="linux/amd64,linux/arm64"
           
+          IS_BETA=false
+          [[ "${{ env.latest_tag }}" == *"rc"* ]] && IS_BETA=true
+          [[ "${{ env.latest_tag }}" == *"beta"* ]] && IS_BETA=true
+          [[ "${{ env.latest_tag }}" == *"alpha"* ]] && IS_BETA=true
+          
           TAGS=()
-          TAGS=("${{ secrets.DOCKERHUB_REPO }}:latest")
-          TAGS+=("${{ secrets.DOCKERHUB_REPO }}:${{ env.latest_tag }}")
-          TAGS+=("ghcr.io/${{ github.repository }}:latest")
+          TAGS=("${{ secrets.DOCKERHUB_REPO }}:${{ env.latest_tag }}")
+          [[ !IS_BETA ]] && TAGS+=("${{ secrets.DOCKERHUB_REPO }}:latest")
           TAGS+=("ghcr.io/${{ github.repository }}:${{ env.latest_tag }}")
+          [[ !IS_BETA ]] && TAGS+=("ghcr.io/${{ github.repository }}:latest")
           
           echo "tags=${TAGS[@]}" >> $GITHUB_OUTPUT
           echo "version=${{ env.latest_tag }}" >> $GITHUB_OUTPUT
