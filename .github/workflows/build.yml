@@ -17,6 +17,9 @@ jobs:
         uses: octokit/graphql-action@v2.x
         id: latest_tag
         with:
+          variables: |
+            repo: lemmy-ui
+            owner: lemmynet
           query: |
             query tag($owner: String!, $repo: String!) {
               repository(owner: $owner, name: $repo) {
@@ -25,8 +28,6 @@ jobs:
                     node {
                       name
                } } } } }
-          repo: lemmy-ui
-          owner: lemmynet
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       - 
@@ -44,6 +45,7 @@ jobs:
         id: check-tag
         run: |
           #!/bin/bash
+          [ -z "${{ env.latest_tag }}" ] && echo "exists=true" >> $GITHUB_ENV && exit 0
           dockerhub_tags=$(curl -s https://hub.docker.com/v2/repositories/${{ secrets.DOCKERHUB_REPO }}/tags | jq -r '.results[].name')
           if echo "${dockerhub_tags}" | grep -qx "${{ env.latest_tag }}"; then
             echo "exists=true" >> $GITHUB_ENV
