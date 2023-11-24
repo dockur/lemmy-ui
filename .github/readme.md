@@ -1,6 +1,6 @@
 <h1 align="center">Lemmy UI<br />
 <div align="center">
-<img src="https://raw.githubusercontent.com/LemmyNet/lemmy-ui/main/src/assets/icons/favicon.svg" title="Logo" style="max-width:100%;" width="128" />
+<img src="https://raw.githubusercontent.com/dockur/lemmy-ui/master/.github/logo.svg" title="Logo" style="max-width:100%;" width="128" />
 </div>
 <div align="center">
   
