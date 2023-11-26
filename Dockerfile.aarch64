@@ -1,6 +1,10 @@
 FROM golang as go-builder
 
 WORKDIR /app
+
+# Gobinaries.com does not support ARM,
+# we have to build node-prune from source
+
 RUN cd /app && \
   git clone https://github.com/tj/node-prune && \
   cd /app/node-prune && \
@@ -50,7 +54,6 @@ RUN echo "export const VERSION = '$(git describe --tag)';" > "src/shared/version
 RUN yarn --production --prefer-offline --network-timeout 100000
 RUN yarn build:prod
 
-# Prune the image
 # Copy the manually built node-prune here
 RUN mkdir -p /usr/local/bin/
 COPY --from=go-builder /app/node-prune/node-prune /usr/local/bin/node-prune
@@ -75,10 +78,6 @@ COPY --from=builder /usr/src/app/dist /app/dist
 COPY --from=builder /usr/src/app/node_modules /app/node_modules
 
 RUN chown -R node:node /app
-USER node
-
-EXPOSE 1234
-WORKDIR /app
 
 ARG DATE_ARG=""
 ARG BUILD_ARG=0
@@ -94,6 +93,9 @@ LABEL org.opencontainers.image.source="https://github.com/dockur/lemmy-ui/"
 LABEL org.opencontainers.image.url="https://hub.docker.com/r/dockurr/lemmy-ui/"
 LABEL org.opencontainers.image.description="The official web app for Lemmy"
 
-HEALTHCHECK --interval=60s --retries=2 --timeout=10s CMD curl -ILfSs http://localhost:1234/ > /dev/null || exit 1
+HEALTHCHECK --interval=60s --start-period=10s --retries=2 --timeout=10s CMD curl -ILfSs http://localhost:1234/ > /dev/null || exit 1
 
+USER node
+EXPOSE 1234
+WORKDIR /app
 CMD exec node dist/js/server.js
