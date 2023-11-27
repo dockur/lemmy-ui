@@ -52,7 +52,7 @@ server.get("/css/code-themes/:name", CodeThemeHandler);
 server.get("/css/themelist", ThemesListHandler);
 server.get("/*", CatchAllHandler);
 
-server.listen(Number(port), hostname, () => {
+var listener = server.listen(Number(port), hostname, () => {
   setupDateFns();
   console.log(`Started listening on http://${hostname}:${port}`);
 });
@@ -64,10 +64,16 @@ var signals = {
 };
 
 const shutdown = (signal, value) => {
-  server.close(() => {
+  // TODO: Should set a flag here for the listener to reject any new
+  // incoming connections with a 503 error while shutting down...
+  listener.close(() => {
     console.log(`Lemmy stopped by ${signal} with value ${value}`);
     process.exit(128 + value);
   });
+  setTimeout( function () {
+   console.error(`Could not close all connections in time, forcing shutdown because of ${signal}...`);
+   process.exit(128 + value);
+  }, 9*1000);
 };
 
 Object.keys(signals).forEach((signal) => {
