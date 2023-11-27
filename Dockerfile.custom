@@ -95,4 +95,5 @@ USER node
 EXPOSE 1234
 WORKDIR /app
  
-CMD ["node", "dist/js/server.js"]
+#CMD ["node", "dist/js/server.js"]
+CMD exec node dist/js/server.js
