@@ -1,5 +1,6 @@
 import { setupDateFns } from "@utils/app";
 import { getStaticDir } from "@utils/env";
+import { VERSION } from "../shared/version";
 import express from "express";
 import path from "path";
 import process from "process";
@@ -54,7 +55,9 @@ server.get("/*", CatchAllHandler);
 
 const listener = server.listen(Number(port), hostname, () => {
   setupDateFns();
-  console.log(`Started listening on http://${hostname}:${port}`);
+  console.log(
+    `Lemmy-ui v${VERSION} started listening on http://${hostname}:${port}`,
+  );
 });
 
 const signals = {
@@ -64,7 +67,7 @@ const signals = {
 };
 
 const exit_signal = 128; // Fatal error signal code on Linux systems
-const exit_timeout = 8; // Because Docker SIGTERMs after 10 secs
+const exit_timeout = 8000; // Because Docker SIGTERMs after 10 secs
 
 const shutdown = (signal, value) => {
   // TODO: Should set a flag here for the listener to reject any further
@@ -74,12 +77,12 @@ const shutdown = (signal, value) => {
     console.log(`Lemmy stopped by ${signal} with value ${value}`);
     process.exit(exit_signal + value);
   });
-  setTimeout(function () {
+  setTimeout(() => {
     console.error(
       `Could not close all connections in time, forcing shutdown because of ${signal}...`,
     );
     process.exit(exit_signal + value);
-  }, exit_timeout * 1000);
+  }, exit_timeout);
 };
 
 for (const [signal, value] of Object.entries(signals)) {
