@@ -64,8 +64,9 @@ var signals = {
 };
 
 const shutdown = (signal, value) => {
-  // TODO: Should set a flag here for the listener to reject any new
-  // incoming connections with a 503 error while shutting down...
+  // TODO: Should set a flag here for the listener to reject any further
+  // incoming connections with a HTTP 503 error while shutting down.
+  // Otherwise the connection count may not drop to 0 before timeout.
   listener.close(() => {
     console.log(`Lemmy stopped by ${signal} with value ${value}`);
     process.exit(128 + value);
