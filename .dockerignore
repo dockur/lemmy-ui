@@ -8,6 +8,7 @@ dist
 .gitmodules
 .vscode
 Dockerfile
+Dockerfile.custom
 Dockerfile.archive
 docker-compose.yml
 
