@@ -54,10 +54,25 @@ server.get("/*", CatchAllHandler);
 
 server.listen(Number(port), hostname, () => {
   setupDateFns();
-  console.log(`http://${hostname}:${port}`);
+  console.log(`Started listening on http://${hostname}:${port}`);
 });
 
-process.on("SIGINT", () => {
-  console.info("Interrupted");
-  process.exit(0);
+var signals = {
+  'SIGHUP': 1,
+  'SIGINT': 2,
+  'SIGTERM': 15
+};
+
+const shutdown = (signal, value) => {
+  server.close(() => {
+    console.log(`Lemmy stopped by ${signal} with value ${value}`);
+    process.exit(128 + value);
+  });
+};
+
+Object.keys(signals).forEach((signal) => {
+  process.on(signal, () => {
+    console.log(`Process received a ${signal} signal`);
+    shutdown(signal, signals[signal]);
+  });
 });
