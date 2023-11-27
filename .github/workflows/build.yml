@@ -95,7 +95,7 @@ jobs:
         run: |
           git config --global url.https://github.com/.insteadOf git://github.com/
           git clone --recurse-submodules -j8 https://github.com/lemmynet/lemmy-ui.git --single-branch --branch ${{ steps.prepare.outputs.version }}
-          cp Dockerfile.aarch64 lemmy-ui/Dockerfile
+          cp Dockerfile.custom lemmy-ui/Dockerfile
           cp .dockerignore lemmy-ui/
       -
         name: Login into Docker Hub
