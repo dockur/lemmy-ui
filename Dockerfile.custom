@@ -94,4 +94,5 @@ HEALTHCHECK --interval=60s --start-period=10s --retries=2 --timeout=10s CMD curl
 USER node
 EXPOSE 1234
 WORKDIR /app
-CMD exec node dist/js/server.js
+ 
+CMD ["node", "dist/js/server.js"]
