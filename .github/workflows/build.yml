@@ -136,7 +136,6 @@ jobs:
         name: Add custom code
         if: env.exists == 'false'
         run: |
-          cp src/server/index.tsx lemmy-ui/src/server/index.tsx
           cp src/shared/components/app/footer.tsx lemmy-ui/src/shared/components/app/footer.tsx
       - 
         name: Build custom image
