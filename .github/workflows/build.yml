@@ -42,22 +42,20 @@ jobs:
           [ -z "$latest_tag" ] && echo "Tag not found!" && exit 1
           [[ "$latest_tag" = v* ]] && latest_tag="${latest_tag:1}"
           echo "Found tag: \"${latest_tag}\"" 
-          [[ "${latest_tag,,}" == *"alpha"* ]] && latest_tag=""
-          [ -z "${latest_tag}" ] && echo "exists=true" >> $GITHUB_ENV && exit 0
           echo "latest_tag=$latest_tag" >> $GITHUB_ENV
       - 
         name: Check if the tag exists locally
-        if: env.exists == 'false'
         uses: mukunku/tag-exists-action@v1.4.0
         id: checkTag
         with: 
           tag: 'v${{ env.latest_tag }}'         
       -
         name: Finish when found
-        if: env.exists == 'false'
         run: |
           #!/bin/bash
-          echo "exists=${{ steps.checkTag.outputs.exists }}" >> $GITHUB_ENV
+          val="${{ steps.checkTag.outputs.exists }}"
+          [[ "${{ env.latest_tag }}" == *"alpha"* ]] && val="true"
+          echo "exists=${val}" >> $GITHUB_ENV
       - 
         name: Checkout
         if: env.exists == 'false'
