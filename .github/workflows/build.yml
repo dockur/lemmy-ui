@@ -47,13 +47,17 @@ jobs:
           echo "latest_tag=$latest_tag" >> $GITHUB_ENV
       - 
         name: Check if the tag exists locally
+        if: env.exists == 'false'
         uses: mukunku/tag-exists-action@v1.4.0
         id: checkTag
         with: 
           tag: 'v${{ env.latest_tag }}'         
       -
-        name: Set variable
-        run: echo "exists=${{ steps.checkTag.outputs.exists }}" >> $GITHUB_ENV
+        name: Finish when found
+        if: env.exists == 'false'
+        run: |
+          #!/bin/bash
+          echo "exists=${{ steps.checkTag.outputs.exists }}" >> $GITHUB_ENV
       - 
         name: Checkout
         if: env.exists == 'false'
