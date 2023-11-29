@@ -128,8 +128,6 @@ jobs:
 
           cd "${DIRECTORY}"
           docker buildx build --progress=plain \
-  
-          docker buildx build --progress=plain \
             --platform "${PLATFORMS}" \
             --output "type=image,push=true" \
             --build-arg "VERSION_ARG=${VERSION}" \
