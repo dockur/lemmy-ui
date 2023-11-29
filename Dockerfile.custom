@@ -75,18 +75,10 @@ COPY --from=builder /usr/src/app/node_modules /app/node_modules
 
 RUN chown -R node:node /app
 
-ARG DATE_ARG=""
-ARG BUILD_ARG=0
 ARG VERSION_ARG=0
 ENV VERSION=$VERSION_ARG
 
 LABEL org.opencontainers.image.title="Lemmy UI"
-LABEL org.opencontainers.image.licenses="AGPL-3.0"
-LABEL org.opencontainers.image.created=${DATE_ARG}
-LABEL org.opencontainers.image.revision=${BUILD_ARG}
-LABEL org.opencontainers.image.version=${VERSION_ARG}
-LABEL org.opencontainers.image.source="https://github.com/dockur/lemmy-ui/"
-LABEL org.opencontainers.image.url="https://hub.docker.com/r/dockurr/lemmy-ui/"
 LABEL org.opencontainers.image.description="The official web app for Lemmy"
 
 HEALTHCHECK --interval=60s --start-period=10s --retries=2 --timeout=10s CMD curl -ILfSs http://localhost:1234/ > /dev/null || exit 1
