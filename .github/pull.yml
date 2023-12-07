@@ -1,7 +1,7 @@
 version: "1"
 rules:
   - base: master
-    upstream: LemmyNet:master
+    upstream: LemmyNet:main
     mergeMethod: merge  # default value if this file does not exist is `hardreset`, effectively overwriting any downstream changes!
     mergeUnstable: false    # Optional, merge pull request even when the mergeable_state is not clean. Default: false
 label: ":arrow_heading_down: pull"  # Optional
