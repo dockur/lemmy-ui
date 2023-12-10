@@ -135,7 +135,7 @@
     "webpack-bundle-analyzer": "^4.9.0",
     "webpack-dev-server": "4.15.1"
   },
-  "packageManager": "yarn@1.22.19",
+  "packageManager": "yarn@1.22.21",
   "engines": {
     "node": ">=8.9.0"
   },
