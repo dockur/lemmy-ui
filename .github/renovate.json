@@ -1,9 +1,5 @@
 {
-  "extends": [
-    "config:base",
-    ":disableDependencyDashboard"
-  ],
-   "npm": {
-      "enabled": false
-    }  
+  "$schema": "https://docs.renovatebot.com/renovate-schema.json",
+  "extends": ["config:recommended", ":disableDependencyDashboard"],
+  "forkProcessing": "enabled"
 }
