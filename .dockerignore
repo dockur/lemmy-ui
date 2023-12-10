@@ -11,5 +11,6 @@ Dockerfile
 Dockerfile.custom
 Dockerfile.archive
 docker-compose.yml
+renovate.json
 
 *.md
