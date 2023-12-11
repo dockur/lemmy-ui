@@ -22,6 +22,9 @@ import { setForwardedHeaders } from "../utils/set-forwarded-headers";
 import { getJwtCookie } from "../utils/has-jwt-cookie";
 
 export default async (req: Request, res: Response) => {
+
+  var begin=console.time('catch');
+
   try {
     const activeRoute = routes.find(route => matchPath(req.path, route));
 
@@ -115,7 +118,8 @@ export default async (req: Request, res: Response) => {
     );
 
     const root = renderToString(wrapper);
-
+    var end= console.timeEnd('catch');
+    
     res.send(await createSsrHtml(root, isoData, res.locals.cspNonce));
   } catch (err) {
     // If an error is caught here, the error page couldn't even be rendered
