@@ -117,7 +117,7 @@ jobs:
           cp .dockerignore ${{ github.event.repository.name }}/
       -
         name: Build Docker image
-        if: env.exists == 'false'
+        if: env.exists == 'falseX'
         uses: docker/build-push-action@v5
         with:
           context: ./${{ github.event.repository.name }}
@@ -134,8 +134,9 @@ jobs:
         name: Copy custom code
         if: env.exists == 'false'
         run: |
-          cp src/server/utils/create-ssr-html.tsx lemmy-ui/src/server/utils/create-ssr-html.tsx
-          cp src/shared/components/app/footer.tsx ${{ github.event.repository.name }}/src/shared/components/app/footer.tsx
+          rm -r lemmy-ui/src
+          mv src lemmy-ui/src
+          #cp src/shared/components/app/footer.tsx ${{ github.event.repository.name }}/src/shared/components/app/footer.tsx
       -
         name: Build custom image
         if: env.exists == 'false'
