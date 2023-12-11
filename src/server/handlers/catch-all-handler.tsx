@@ -67,7 +67,7 @@ export default async (req: Request, res: Response) => {
       if (path !== "/setup" && !site.site_view.local_site.site_setup) {
         return res.redirect("/setup");
       }
-
+      var begin2=console.time('fetch');
       if (site && activeRoute?.fetchInitialData) {
         const initialFetchReq: InitialFetchRequest = {
           path,
@@ -78,7 +78,7 @@ export default async (req: Request, res: Response) => {
 
         routeData = await activeRoute.fetchInitialData(initialFetchReq);
       }
-
+      var end2= console.timeEnd('fetch');
       if (!activeRoute) {
         res.status(404);
       }
