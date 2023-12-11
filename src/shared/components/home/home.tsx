@@ -313,7 +313,6 @@ export class Home extends Component<any, HomeState> {
     site,
     headers,
   }: InitialFetchRequest<QueryParams<HomeProps>>): Promise<HomeData> {
-    
     const client = wrapClient(
       new LemmyHttp(getHttpBaseInternal(), { headers }),
     );
@@ -328,7 +327,7 @@ export class Home extends Component<any, HomeState> {
       Promise.resolve(EMPTY_REQUEST);
     let commentsFetch: Promise<RequestState<GetCommentsResponse>> =
       Promise.resolve(EMPTY_REQUEST);
-    
+
     if (dataType === DataType.Post) {
       const getPostsForm: GetPosts = {
         type_,
@@ -349,7 +348,7 @@ export class Home extends Component<any, HomeState> {
 
       commentsFetch = client.getComments(getCommentsForm);
     }
-    
+
     const trendingCommunitiesForm: ListCommunities = {
       type_: "Local",
       sort: "Hot",
@@ -365,7 +364,7 @@ export class Home extends Component<any, HomeState> {
       commentsFetch,
       trendingCommunitiesFetch,
     ]);
-    
+
     return {
       trendingCommunitiesRes,
       commentsRes,
