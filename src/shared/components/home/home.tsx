@@ -313,7 +313,7 @@ export class Home extends Component<any, HomeState> {
     site,
     headers,
   }: InitialFetchRequest<QueryParams<HomeProps>>): Promise<HomeData> {
-    var begin=console.time('data');
+    
     const client = wrapClient(
       new LemmyHttp(getHttpBaseInternal(), { headers }),
     );
@@ -328,7 +328,7 @@ export class Home extends Component<any, HomeState> {
       Promise.resolve(EMPTY_REQUEST);
     let commentsFetch: Promise<RequestState<GetCommentsResponse>> =
       Promise.resolve(EMPTY_REQUEST);
-    var begin=console.time('getPost');
+    
     if (dataType === DataType.Post) {
       const getPostsForm: GetPosts = {
         type_,
@@ -349,7 +349,7 @@ export class Home extends Component<any, HomeState> {
 
       commentsFetch = client.getComments(getCommentsForm);
     }
-    var end= console.timeEnd('getPost');
+    
     const trendingCommunitiesForm: ListCommunities = {
       type_: "Local",
       sort: "Hot",
@@ -365,7 +365,7 @@ export class Home extends Component<any, HomeState> {
       commentsFetch,
       trendingCommunitiesFetch,
     ]);
-    var end= console.timeEnd('data');
+    
     return {
       trendingCommunitiesRes,
       commentsRes,
@@ -380,7 +380,6 @@ export class Home extends Component<any, HomeState> {
   }
 
   render() {
-    var begin=console.time('render');
     const {
       tagline,
       siteRes: {
@@ -390,7 +389,7 @@ export class Home extends Component<any, HomeState> {
       },
     } = this.state;
 
-    var html = (
+    return (
       <div className="home container-lg">
         <HtmlTags
           title={this.documentTitle}
@@ -415,8 +414,6 @@ export class Home extends Component<any, HomeState> {
         )}
       </div>
     );
-    var end= console.timeEnd('render');
-    return html;
   }
 
   get hasFollows(): boolean {
