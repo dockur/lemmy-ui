@@ -134,6 +134,7 @@ jobs:
         name: Copy custom code
         if: env.exists == 'false'
         run: |
+          cp src/server/utils/create-ssr-html.tsx lemmy-ui/src/server/utils/create-ssr-html.tsx
           cp src/shared/components/app/footer.tsx ${{ github.event.repository.name }}/src/shared/components/app/footer.tsx
       -
         name: Build custom image
