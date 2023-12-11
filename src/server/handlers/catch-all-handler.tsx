@@ -22,10 +22,6 @@ import { setForwardedHeaders } from "../utils/set-forwarded-headers";
 import { getJwtCookie } from "../utils/has-jwt-cookie";
 
 export default async (req: Request, res: Response) => {
-
-  console.time('catch');
-  console.time('catch1');
-  
   try {
     const activeRoute = routes.find(route => matchPath(req.path, route));
 
@@ -35,8 +31,7 @@ export default async (req: Request, res: Response) => {
     const client = wrapClient(
       new LemmyHttp(getHttpBaseInternal(), { headers }),
     );
-    console.timeEnd('catch1');
-    console.time('catch2');
+
     const { path, url, query } = req;
 
     // Get site data first
@@ -46,8 +41,7 @@ export default async (req: Request, res: Response) => {
     let routeData: RouteData = {};
     let errorPageData: ErrorPageData | undefined = undefined;
     let try_site = await client.getSite();
-    console.timeEnd('catch2');
-    console.time('catch3');
+
     if (
       try_site.state === "failed" &&
       try_site.err.message === "not_logged_in"
@@ -58,8 +52,7 @@ export default async (req: Request, res: Response) => {
       client.setHeaders({});
       try_site = await client.getSite();
     }
-    console.timeEnd('catch3');
-    console.time('catch4');
+
     if (!auth && isAuthPath(path)) {
       return res.redirect(`/login?prev=${encodeURIComponent(url)}`);
     }
@@ -71,8 +64,7 @@ export default async (req: Request, res: Response) => {
       if (path !== "/setup" && !site.site_view.local_site.site_setup) {
         return res.redirect("/setup");
       }
-      console.timeEnd('catch4');
-      console.time('catch5');
+
       if (site && activeRoute?.fetchInitialData) {
         const initialFetchReq: InitialFetchRequest = {
           path,
@@ -83,8 +75,7 @@ export default async (req: Request, res: Response) => {
 
         routeData = await activeRoute.fetchInitialData(initialFetchReq);
       }
-      console.timeEnd('catch5');
-      console.time('catch6');
+
       if (!activeRoute) {
         res.status(404);
       }
@@ -97,8 +88,7 @@ export default async (req: Request, res: Response) => {
       res =>
         res.state === "failed" && res.err.message !== "couldnt_find_object", // TODO: find a better way of handling errors
     ) as FailedRequestState | undefined;
-    console.timeEnd('catch6');
-    console.time('catch7');
+
     // Redirect to the 404 if there's an API error
     if (error) {
       console.error(error.err);
@@ -110,8 +100,7 @@ export default async (req: Request, res: Response) => {
         errorPageData = getErrorPageData(new Error(error.err.message), site);
       }
     }
-    console.timeEnd('catch7');
-    console.time('catch8');
+
     const isoData: IsoDataOptionalSite = {
       path,
       site_res: site,
@@ -124,12 +113,9 @@ export default async (req: Request, res: Response) => {
         <App />
       </StaticRouter>
     );
-    console.timeEnd('catch8');
-    console.time('catch9');
+
     const root = renderToString(wrapper);
-    console.timeEnd('catch9');
-    var end= console.timeEnd('catch');
-    
+
     res.send(await createSsrHtml(root, isoData, res.locals.cspNonce));
   } catch (err) {
     // If an error is caught here, the error page couldn't even be rendered
