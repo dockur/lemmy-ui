@@ -17,7 +17,6 @@ export async function createSsrHtml(
   isoData: IsoDataOptionalSite,
   cspNonce: string,
 ) {
-  var begin=console.time('ssr');
   const site = isoData.site_res;
 
   const fallbackTheme = `<link rel="stylesheet" type="text/css" href="/css/themes/${
@@ -64,7 +63,7 @@ export async function createSsrHtml(
 
   const helmet = Helmet.renderStatic();
 
-  const html = `
+  return `
     <!DOCTYPE html>
     <html ${helmet.htmlAttributes.toString()}>
     <head>
@@ -115,6 +114,4 @@ export async function createSsrHtml(
     </body>
   </html>
   `;
-  var end= console.timeEnd('ssr');
-  return html;
 }
