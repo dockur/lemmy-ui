@@ -130,6 +130,22 @@ jobs:
           build-args: |
             VERSION_ARG=${{ steps.meta.outputs.version }}
       -
+        name: Custom metadata
+        id: custom
+        if: env.exists == 'false'
+        uses: docker/metadata-action@v5
+        with:
+          context: git
+          images: |
+            ${{ secrets.DOCKERHUB_CUSTOM }}
+          tags: |
+            type=raw,value=latest,priority=100,enable=${{ env.beta == 'false' }}
+            type=raw,value=${{ env.latest_tag }}
+          labels: |
+            org.opencontainers.image.title=${{ vars.NAME }}
+        env:
+          DOCKER_METADATA_ANNOTATIONS_LEVELS: manifest,index
+      -
         name: Copy custom code
         if: env.exists == 'false'
         run: |
@@ -145,11 +161,9 @@ jobs:
           push: true
           provenance: false
           platforms: linux/amd64,linux/arm64
-          tags: |
-            ${{ secrets.DOCKERHUB_CUSTOM }}:latest
-            ${{ secrets.DOCKERHUB_CUSTOM }}:${{ steps.meta.outputs.version }}
-          labels: ${{ steps.meta.outputs.labels }}
-          annotations: ${{ steps.meta.outputs.labels }}
+          tags: ${{ steps.custom.outputs.tags }}
+          labels: ${{ steps.custom.outputs.labels }}
+          annotations: ${{ steps.custom.outputs.annotations }}
           build-args: |
             VERSION_ARG=${{ steps.meta.outputs.version }}
       -
