@@ -1,12 +1,3 @@
-FROM golang as go-builder
-
-WORKDIR /app
-
-RUN cd /app && \
-  git clone https://github.com/tj/node-prune && \
-  cd /app/node-prune && \
-  CGO_ENABLED=0 go build
-
 FROM node:21-alpine as builder
 
 # Upgrade to edge to fix sharp/libvips issues
@@ -48,12 +39,6 @@ RUN echo "export const VERSION = '$(git describe --tag)';" > "src/shared/version
 
 RUN yarn --production --prefer-offline --network-timeout 100000
 RUN yarn build:prod
-
-# Copy the manually built node-prune here
-RUN mkdir -p /usr/local/bin/
-COPY --from=go-builder /app/node-prune/node-prune /usr/local/bin/node-prune
-RUN chmod +x /usr/local/bin/node-prune
-RUN node-prune /usr/src/app/node_modules
 
 RUN rm -rf ./node_modules/import-sort-parser-typescript
 RUN rm -rf ./node_modules/typescript
