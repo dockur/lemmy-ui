@@ -4,7 +4,7 @@ FROM node:21-alpine as builder
 # Done for two reasons:
 # - libvips binaries are not available for ARM32
 # - It can break depending on the CPU (https://github.com/LemmyNet/lemmy-ui/issues/1566)
-RUN apk update && apk upgrade && apk add --no-cache curl yarn python3 build-base gcc wget git vips-dev pkgconfig
+RUN apk update && apk add --no-cache curl yarn python3 build-base gcc wget git vips-dev pkgconfig
 
 # Install node-gyp
 RUN npm install -g node-gyp
