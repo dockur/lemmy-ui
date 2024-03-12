@@ -25,7 +25,7 @@ export class Footer extends Component<FooterProps, any> {
               </li>
             )}
             <li className="nav-item">
-              <span className="nav-link">BE: {this.props.site?.version}</span>
+              <span className="nav-link">v{this.props.site?.version}</span>
             </li>
             <li className="nav-item">
               <NavLink className="nav-link" to="/modlog">
@@ -36,13 +36,6 @@ export class Footer extends Component<FooterProps, any> {
               <li className="nav-item">
                 <NavLink className="nav-link" to="/legal">
                   {I18NextService.i18n.t("legal_information")}
-                </NavLink>
-              </li>
-            )}
-            {this.props.site?.site_view.local_site.federation_enabled && (
-              <li className="nav-item">
-                <NavLink className="nav-link" to="/instances">
-                  {I18NextService.i18n.t("instances")}
                 </NavLink>
               </li>
             )}
