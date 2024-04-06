@@ -15,7 +15,7 @@ Multi-platform docker image of [Lemmy UI](https://github.com/LemmyNet/lemmy-ui),
 
 ## How to use
 
-Via `docker-compose`
+Via Docker Compose:
 
 ```yaml
 version: "3"
