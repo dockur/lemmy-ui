@@ -19,6 +19,7 @@ import {
   DeletePost,
   EditPost,
   FeaturePost,
+  HidePost,
   Language,
   LockPost,
   MarkPostAsRead,
@@ -35,7 +36,7 @@ import { relTags } from "../../config";
 import { VoteContentType } from "../../interfaces";
 import { mdToHtml, mdToHtmlInline } from "../../markdown";
 import { I18NextService, UserService } from "../../services";
-import { setupTippy } from "../../tippy";
+import { tippyMixin } from "../mixins/tippy-mixin";
 import { Icon } from "../common/icon";
 import { MomentTime } from "../common/moment-time";
 import { PictrsImage } from "../common/pictrs-image";
@@ -91,8 +92,11 @@ interface PostListingProps {
   onAddAdmin(form: AddAdmin): Promise<void>;
   onTransferCommunity(form: TransferCommunity): Promise<void>;
   onMarkPostAsRead(form: MarkPostAsRead): void;
+  onHidePost(form: HidePost): Promise<void>;
+  onScrollIntoCommentsClick?(e: MouseEvent): void;
 }
 
+@tippyMixin
 export class PostListing extends Component<PostListingProps, PostListingState> {
   state: PostListingState = {
     showEdit: false,
@@ -124,6 +128,7 @@ export class PostListing extends Component<PostListingProps, PostListingState> {
     this.handleModBanFromSite = this.handleModBanFromSite.bind(this);
     this.handlePurgePerson = this.handlePurgePerson.bind(this);
     this.handlePurgePost = this.handlePurgePost.bind(this);
+    this.handleHidePost = this.handleHidePost.bind(this);
   }
 
   componentDidMount(): void {
@@ -609,6 +614,7 @@ export class PostListing extends Component<PostListingProps, PostListingState> {
             onPurgeUser={this.handlePurgePerson}
             onPurgeContent={this.handlePurgePost}
             onAppointAdmin={this.handleAppointAdmin}
+            onHidePost={this.handleHidePost}
           />
         )}
       </div>
@@ -636,6 +642,7 @@ export class PostListing extends Component<PostListingProps, PostListingState> {
         title={title}
         to={`/post/${pv.post.id}?scrollToComments=true`}
         data-tippy-content={title}
+        onClick={this.props.onScrollIntoCommentsClick}
       >
         <Icon icon="message-square" classes="me-1" inline />
         {pv.counts.comments}
@@ -904,6 +911,13 @@ export class PostListing extends Component<PostListingProps, PostListingState> {
     });
   }
 
+  handleHidePost() {
+    return this.props.onHidePost({
+      hide: !this.postView.hidden,
+      post_ids: [this.postView.post.id],
+    });
+  }
+
   handleModBanFromCommunity({
     daysUntilExpires,
     reason,
@@ -982,7 +996,6 @@ export class PostListing extends Component<PostListingProps, PostListingState> {
   handleImageExpandClick(i: PostListing, event: any) {
     event.preventDefault();
     i.setState({ imageExpanded: !i.state.imageExpanded });
-    setupTippy();
 
     if (myAuth() && !i.postView.read) {
       i.props.onMarkPostAsRead({
@@ -998,7 +1011,6 @@ export class PostListing extends Component<PostListingProps, PostListingState> {
 
   handleShowBody(i: PostListing) {
     i.setState({ showBody: !i.state.showBody });
-    setupTippy();
   }
 
   get pointsTippy(): string {

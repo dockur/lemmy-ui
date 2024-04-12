@@ -14,8 +14,13 @@ import {
   updateCommunityBlock,
   updatePersonBlock,
 } from "@utils/app";
-import { getQueryParams, getQueryString } from "@utils/helpers";
-import type { QueryParams } from "@utils/types";
+import {
+  getQueryParams,
+  getQueryString,
+  resourcesSettled,
+} from "@utils/helpers";
+import { scrollMixin } from "../mixins/scroll-mixin";
+import type { QueryParams, StringBoolean } from "@utils/types";
 import { RouteDataResponse } from "@utils/types";
 import { Component, RefObject, createRef, linkEvent } from "inferno";
 import { RouteComponentProps } from "inferno-router/dist/Route";
@@ -54,6 +59,7 @@ import {
   GetPosts,
   GetPostsResponse,
   GetSiteResponse,
+  HidePost,
   LemmyHttp,
   LockPost,
   MarkCommentReplyAsRead,
@@ -87,7 +93,7 @@ import {
   RequestState,
   wrapClient,
 } from "../../services/HttpService";
-import { setupTippy } from "../../tippy";
+import { tippyMixin } from "../mixins/tippy-mixin";
 import { toast } from "../../toast";
 import { CommentNodes } from "../comment/comment-nodes";
 import { BannerIconHeader } from "../common/banner-icon-header";
@@ -106,6 +112,7 @@ import {
 } from "../common/loading-skeleton";
 import { Sidebar } from "./sidebar";
 import { IRoutePropsWithFetch } from "../../routes";
+import PostHiddenSelect from "../common/post-hidden-select";
 
 type CommunityData = RouteDataResponse<{
   communityRes: GetCommunityResponse;
@@ -127,6 +134,7 @@ interface CommunityProps {
   dataType: DataType;
   sort: SortType;
   pageCursor?: PaginationCursor;
+  showHidden?: StringBoolean;
 }
 
 type Fallbacks = { sort: SortType };
@@ -143,6 +151,7 @@ export function getCommunityQueryParams(
       dataType: getDataTypeFromQuery,
       pageCursor: (cursor?: string) => cursor,
       sort: getSortTypeFromQuery,
+      showHidden: (include?: StringBoolean) => include,
     },
     source,
     {
@@ -172,6 +181,8 @@ export type CommunityFetchConfig = IRoutePropsWithFetch<
   CommunityProps
 >;
 
+@scrollMixin
+@tippyMixin
 export class Community extends Component<CommunityRouteProps, State> {
   private isoData = setIsoData<CommunityData>(this.context);
   state: State = {
@@ -184,6 +195,16 @@ export class Community extends Component<CommunityRouteProps, State> {
     isIsomorphic: false,
   };
   private readonly mainContentRef: RefObject<HTMLElement>;
+
+  loadingSettled() {
+    return resourcesSettled([
+      this.state.communityRes,
+      this.props.dataType === DataType.Post
+        ? this.state.postsRes
+        : this.state.commentsRes,
+    ]);
+  }
+
   constructor(props: CommunityRouteProps, context: any) {
     super(props, context);
 
@@ -225,6 +246,9 @@ export class Community extends Component<CommunityRouteProps, State> {
     this.handleSavePost = this.handleSavePost.bind(this);
     this.handlePurgePost = this.handlePurgePost.bind(this);
     this.handleFeaturePost = this.handleFeaturePost.bind(this);
+    this.handleHidePost = this.handleHidePost.bind(this);
+    this.handleShowHiddenChange = this.handleShowHiddenChange.bind(this);
+
     this.mainContentRef = createRef();
     // Only fetch the data if coming from another route
     if (FirstLoadService.isFirstLoad) {
@@ -253,13 +277,11 @@ export class Community extends Component<CommunityRouteProps, State> {
     if (!this.state.isIsomorphic) {
       await Promise.all([this.fetchCommunity(), this.fetchData()]);
     }
-
-    setupTippy();
   }
 
   static async fetchInitialData({
     headers,
-    query: { dataType, pageCursor, sort },
+    query: { dataType, pageCursor, sort, showHidden },
     match: {
       params: { name: communityName },
     },
@@ -288,6 +310,7 @@ export class Community extends Component<CommunityRouteProps, State> {
         sort,
         type_: "All",
         saved_only: false,
+        show_hidden: showHidden === "true",
       };
 
       postsFetch = client.getPosts(getPostsForm);
@@ -466,6 +489,7 @@ export class Community extends Component<CommunityRouteProps, State> {
               onTransferCommunity={this.handleTransferCommunity}
               onFeaturePost={this.handleFeaturePost}
               onMarkPostAsRead={async () => {}}
+              onHidePost={this.handleHidePost}
             />
           );
       }
@@ -545,10 +569,7 @@ export class Community extends Component<CommunityRouteProps, State> {
   }
 
   selects(res: GetCommunityResponse) {
-    // let communityRss = this.state.communityRes.map(r =>
-    //   communityRSSUrl(r.community_view.community.actor_id, this.state.sort)
-    // );
-    const { dataType, sort } = this.props;
+    const { dataType, sort, showHidden } = this.props;
     const communityRss = res
       ? communityRSSUrl(res.community_view.community.actor_id, sort)
       : undefined;
@@ -561,6 +582,14 @@ export class Community extends Component<CommunityRouteProps, State> {
             onChange={this.handleDataTypeChange}
           />
         </span>
+        {dataType === DataType.Post && UserService.Instance.myUserInfo && (
+          <span className="me-3">
+            <PostHiddenSelect
+              showHidden={showHidden}
+              onShowHiddenChange={this.handleShowHiddenChange}
+            />
+          </span>
+        )}
         <span className="me-2">
           <SortSelect sort={sort} onChange={this.handleSortChange} />
         </span>
@@ -586,17 +615,21 @@ export class Community extends Component<CommunityRouteProps, State> {
 
   handlePageNext(nextPage: PaginationCursor) {
     this.updateUrl({ pageCursor: nextPage });
-    window.scrollTo(0, 0);
   }
 
   handleSortChange(sort: SortType) {
     this.updateUrl({ sort, pageCursor: undefined });
-    window.scrollTo(0, 0);
   }
 
   handleDataTypeChange(dataType: DataType) {
     this.updateUrl({ dataType, pageCursor: undefined });
-    window.scrollTo(0, 0);
+  }
+
+  handleShowHiddenChange(show?: StringBoolean) {
+    this.updateUrl({
+      showHidden: show,
+      pageCursor: undefined,
+    });
   }
 
   handleShowSidebarMobile(i: Community) {
@@ -605,13 +638,23 @@ export class Community extends Component<CommunityRouteProps, State> {
     }));
   }
 
-  async updateUrl({ dataType, pageCursor, sort }: Partial<CommunityProps>) {
-    const { dataType: urlDataType, sort: urlSort } = this.props;
+  async updateUrl({
+    dataType,
+    pageCursor,
+    sort,
+    showHidden,
+  }: Partial<CommunityProps>) {
+    const {
+      dataType: urlDataType,
+      sort: urlSort,
+      showHidden: urlShowHidden,
+    } = this.props;
 
     const queryParams: QueryParams<CommunityProps> = {
       dataType: getDataTypeString(dataType ?? urlDataType),
       pageCursor: pageCursor,
       sort: sort ?? urlSort,
+      showHidden: showHidden ?? urlShowHidden,
     };
 
     this.props.history.push(
@@ -622,7 +665,7 @@ export class Community extends Component<CommunityRouteProps, State> {
   }
 
   async fetchData() {
-    const { dataType, pageCursor, sort } = this.props;
+    const { dataType, pageCursor, sort, showHidden } = this.props;
     const { name } = this.props.match.params;
 
     if (dataType === DataType.Post) {
@@ -635,6 +678,7 @@ export class Community extends Component<CommunityRouteProps, State> {
           type_: "All",
           community_name: name,
           saved_only: false,
+          show_hidden: showHidden === "true",
         }),
       });
     } else {
@@ -649,8 +693,6 @@ export class Community extends Component<CommunityRouteProps, State> {
         }),
       });
     }
-
-    setupTippy();
   }
 
   async handleDeleteCommunity(form: DeleteCommunity) {
@@ -812,6 +854,26 @@ export class Community extends Component<CommunityRouteProps, State> {
   async handleLockPost(form: LockPost) {
     const lockRes = await HttpService.client.lockPost(form);
     this.findAndUpdatePost(lockRes);
+  }
+
+  async handleHidePost(form: HidePost) {
+    const hideRes = await HttpService.client.hidePost(form);
+
+    if (hideRes.state === "success") {
+      this.setState(prev => {
+        if (prev.postsRes.state === "success") {
+          for (const post of prev.postsRes.data.posts.filter(p =>
+            form.post_ids.some(id => id === p.post.id),
+          )) {
+            post.hidden = form.hide;
+          }
+        }
+
+        return prev;
+      });
+
+      toast(I18NextService.i18n.t(form.hide ? "post_hidden" : "post_unhidden"));
+    }
   }
 
   async handleDistinguishComment(form: DistinguishComment) {

@@ -37,7 +37,6 @@ import {
   LOADING_REQUEST,
   RequestState,
 } from "../../services/HttpService";
-import { setupTippy } from "../../tippy";
 import { toast } from "../../toast";
 import { Icon, Spinner } from "../common/icon";
 import { LanguageSelect } from "../common/language-select";
@@ -306,7 +305,6 @@ export class PostForm extends Component<PostFormProps, PostFormState> {
   }
 
   componentDidMount() {
-    setupTippy();
     const textarea: any = document.getElementById("post-title");
 
     if (textarea) {
@@ -477,6 +475,7 @@ export class PostForm extends Component<PostFormProps, PostFormState> {
                 onAddAdmin={async () => {}}
                 onTransferCommunity={async () => {}}
                 onMarkPostAsRead={async () => {}}
+                onHidePost={async () => {}}
               />
             </>
           )}
@@ -690,6 +689,7 @@ export class PostForm extends Component<PostFormProps, PostFormState> {
                 onAddAdmin={async () => {}}
                 onTransferCommunity={async () => {}}
                 onMarkPostAsRead={async () => {}}
+                onHidePost={async () => {}}
               />
             </>
           )

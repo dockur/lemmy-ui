@@ -20,6 +20,7 @@ import ViewVotesModal from "../view-votes-modal";
 import ModActionFormModal, { BanUpdateForm } from "../mod-action-form-modal";
 import { BanType, CommentNodeView, PurgeType } from "../../../interfaces";
 import { getApubName, hostname } from "@utils/helpers";
+import { tippyMixin } from "../../mixins/tippy-mixin";
 
 interface ContentActionDropdownPropsBase {
   onSave: () => Promise<void>;
@@ -53,6 +54,7 @@ export type ContentPostProps = {
   onLock: () => Promise<void>;
   onFeatureLocal: () => Promise<void>;
   onFeatureCommunity: () => Promise<void>;
+  onHidePost: () => Promise<void>;
 } & ContentActionDropdownPropsBase;
 
 type ContentActionDropdownProps = ContentCommentProps | ContentPostProps;
@@ -76,6 +78,7 @@ type ContentActionDropdownState = {
   mounted: boolean;
 } & { [key in DialogType]: boolean };
 
+@tippyMixin
 export default class ContentActionDropdown extends Component<
   ContentActionDropdownProps,
   ContentActionDropdownState
@@ -176,6 +179,17 @@ export default class ContentActionDropdown extends Component<
           </button>
 
           <ul className="dropdown-menu" id={dropdownId}>
+            {type === "post" && (
+              <li>
+                <ActionButton
+                  icon={this.props.postView.hidden ? "eye" : "eye-slash"}
+                  label={I18NextService.i18n.t(
+                    this.props.postView.hidden ? "unhide_post" : "hide_post",
+                  )}
+                  onClick={this.props.onHidePost}
+                />
+              </li>
+            )}
             {this.amCreator ? (
               <>
                 <li>
