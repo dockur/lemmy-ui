@@ -1,4 +1,4 @@
-import { myAuth } from "@utils/app";
+import { myAuth, setIsoData } from "@utils/app";
 import { canShare, share } from "@utils/browser";
 import { getExternalHost, getHttpBase } from "@utils/env";
 import { futureDaysToUnixTime, hostname } from "@utils/helpers";
@@ -21,6 +21,7 @@ import {
   FeaturePost,
   HidePost,
   Language,
+  LocalUserVoteDisplayMode,
   LockPost,
   MarkPostAsRead,
   PersonView,
@@ -33,7 +34,7 @@ import {
   TransferCommunity,
 } from "lemmy-js-client";
 import { relTags } from "../../config";
-import { VoteContentType } from "../../interfaces";
+import { IsoDataOptionalSite, VoteContentType } from "../../interfaces";
 import { mdToHtml, mdToHtmlInline } from "../../markdown";
 import { I18NextService, UserService } from "../../services";
 import { tippyMixin } from "../mixins/tippy-mixin";
@@ -73,6 +74,7 @@ interface PostListingProps {
   showBody?: boolean;
   hideImage?: boolean;
   enableDownvotes?: boolean;
+  voteDisplayMode: LocalUserVoteDisplayMode;
   enableNsfw?: boolean;
   viewOnly?: boolean;
   onPostEdit(form: EditPost): Promise<RequestState<PostResponse>>;
@@ -98,9 +100,10 @@ interface PostListingProps {
 
 @tippyMixin
 export class PostListing extends Component<PostListingProps, PostListingState> {
+  private readonly isoData: IsoDataOptionalSite = setIsoData(this.context);
   state: PostListingState = {
     showEdit: false,
-    imageExpanded: false,
+    imageExpanded: !!this.isoData.site_res?.site_view.site.content_warning,
     viewSource: false,
     showAdvanced: false,
     showBody: false,
@@ -167,6 +170,7 @@ export class PostListing extends Component<PostListingProps, PostListingState> {
             onCancel={this.handleEditCancel}
             enableNsfw={this.props.enableNsfw}
             enableDownvotes={this.props.enableDownvotes}
+            voteDisplayMode={this.props.voteDisplayMode}
             allLanguages={this.props.allLanguages}
             siteLanguages={this.props.siteLanguages}
           />
@@ -391,7 +395,7 @@ export class PostListing extends Component<PostListingProps, PostListingState> {
             }
           </span>
         )}{" "}
-        • <MomentTime published={pv.post.published} updated={pv.post.updated} />
+        · <MomentTime published={pv.post.published} updated={pv.post.updated} />
       </div>
     );
   }
@@ -552,12 +556,18 @@ export class PostListing extends Component<PostListingProps, PostListingState> {
   }
 
   commentsLine(mobile = false) {
-    const { admins, moderators, showBody, onPostVote, enableDownvotes } =
-      this.props;
+    const {
+      admins,
+      moderators,
+      showBody,
+      onPostVote,
+      enableDownvotes,
+      voteDisplayMode,
+    } = this.props;
     const {
       post: { ap_id, id, body },
-      counts,
       my_vote,
+      counts,
     } = this.postView;
 
     return (
@@ -584,9 +594,10 @@ export class PostListing extends Component<PostListingProps, PostListingState> {
             voteContentType={VoteContentType.Post}
             id={id}
             onVote={onPostVote}
-            enableDownvotes={enableDownvotes}
             counts={counts}
-            my_vote={my_vote}
+            enableDownvotes={enableDownvotes}
+            voteDisplayMode={voteDisplayMode}
+            myVote={my_vote}
           />
         )}
 
@@ -742,8 +753,9 @@ export class PostListing extends Component<PostListingProps, PostListingState> {
                   id={this.postView.post.id}
                   onVote={this.props.onPostVote}
                   enableDownvotes={this.props.enableDownvotes}
+                  voteDisplayMode={this.props.voteDisplayMode}
                   counts={this.postView.counts}
-                  my_vote={this.postView.my_vote}
+                  myVote={this.postView.my_vote}
                 />
               </div>
             )}
