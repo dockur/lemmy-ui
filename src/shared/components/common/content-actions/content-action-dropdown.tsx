@@ -10,7 +10,6 @@ import {
   amMod,
   canAdmin,
   canMod,
-  isBanned,
 } from "@utils/roles";
 import ActionButton from "./action-button";
 import classNames from "classnames";
@@ -154,7 +153,7 @@ export default class ContentActionDropdown extends Component<
       type === "post"
         ? `post-actions-dropdown-${id}`
         : `comment-actions-dropdown-${id}`;
-    const creatorBannedFromLocal = isBanned(creator);
+    const creatorBannedFromLocal = creator.banned;
     const showToggleAdmin = !creatorBannedFromLocal && creator.local;
     const canAppointCommunityMod =
       (amMod(community.id) || (amAdmin() && community.local)) &&
@@ -347,6 +346,20 @@ export default class ContentActionDropdown extends Component<
                       />
                     </li>
                   )}
+                <li>
+                  <Link
+                    className="btn btn-link btn-sm d-flex align-items-center rounded-0 dropdown-item"
+                    to={`/modlog?${type === "post" ? "postId" : "commentId"}=${id}`}
+                    title={I18NextService.i18n.t("moderation_history")}
+                    aria-label={I18NextService.i18n.t("moderation_history")}
+                    data-tippy-content={I18NextService.i18n.t(
+                      "moderation_history",
+                    )}
+                  >
+                    <Icon icon="history" inline classes="me-2" />
+                    {I18NextService.i18n.t("moderation_history")}
+                  </Link>
+                </li>
                 {(this.canMod || this.canAdmin) && (
                   <li>
                     <ActionButton
@@ -416,7 +429,8 @@ export default class ContentActionDropdown extends Component<
                       )}
                     </>
                   )}
-                {(amCommunityCreator(this.id, moderators) || this.canAdmin) &&
+                {(amCommunityCreator(creator.id, moderators) ||
+                  this.canAdmin) &&
                   creator_is_moderator && (
                     <li>
                       <ActionButton
@@ -841,12 +855,6 @@ export default class ContentActionDropdown extends Component<
       UserService.Instance.myUserInfo,
       true,
     );
-  }
-
-  get id() {
-    return this.props.type === "post"
-      ? this.props.postView.creator.id
-      : this.props.commentView.creator.id;
   }
 
   wrapHandler(handler: (arg?: any) => Promise<void>) {
