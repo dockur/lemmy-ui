@@ -18,7 +18,6 @@ Multi-platform docker image of [Lemmy UI](https://github.com/LemmyNet/lemmy-ui),
 Via Docker Compose:
 
 ```yaml
-version: "3"
 services:
   lemmy-ui:
     container_name: lemmy-ui
