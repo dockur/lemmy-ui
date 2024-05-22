@@ -157,9 +157,8 @@ jobs:
         name: Copy custom code
         if: env.exists == 'false'
         run: |
-          #rm -r lemmy-ui/src
-          #mv src lemmy-ui/src
           cp src/shared/components/app/footer.tsx ${{ github.event.repository.name }}/src/shared/components/app/footer.tsx
+          cp src/shared/components/app/navbar.tsx ${{ github.event.repository.name }}/src/shared/components/app/navbar.tsx
       -
         name: Build custom image
         if: env.exists == 'false'
