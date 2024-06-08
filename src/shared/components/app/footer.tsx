@@ -30,7 +30,7 @@ export class Footer extends Component<FooterProps, any> {
             {this.props.site?.site_view.local_site.legal_information && (
               <li className="nav-item">
                 <NavLink className="nav-link" to="/legal">
-                  {I18NextService.i18n.t("legal_information")}
+                  Contact
                 </NavLink>
               </li>
             )}
