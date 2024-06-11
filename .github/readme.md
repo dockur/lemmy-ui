@@ -13,7 +13,7 @@
 
 Multi-platform docker image of [Lemmy UI](https://github.com/LemmyNet/lemmy-ui), a link aggregator and forum for the fediverse.
 
-## How to use
+## Usage  🐳
 
 Via Docker Compose:
 
@@ -31,7 +31,7 @@ services:
     stop_grace_period: 1m
 ```
 
-## Configuration
+## Configuration ⚙️
 
 The following environment variables can be used to configure lemmy-ui:
 
@@ -46,7 +46,7 @@ The following environment variables can be used to configure lemmy-ui:
 | `LEMMY_UI_DISABLE_CSP`         | `bool`   | `false`          | Disables CSP security headers                                                       |
 | `LEMMY_UI_CUSTOM_HTML_HEADER`  | `string` |                  | Injects a custom script into `<head>`.                                              |
 
-## Stars
+## Stars 🌟
 [![Stars](https://starchart.cc/dockur/lemmy-ui.svg?variant=adaptive)](https://starchart.cc/dockur/lemmy-ui)
 
 [build_url]: https://github.com/dockur/lemmy-ui/
