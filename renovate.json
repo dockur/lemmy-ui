@@ -1,5 +1,17 @@
 {
   "$schema": "https://docs.renovatebot.com/renovate-schema.json",
-  "extends": ["config:recommended"],
-  "automerge": true
+  "extends": ["config:recommended", ":disableDependencyDashboard"],
+  "forkProcessing": "enabled",
+  "woodpecker": {
+    "enabled": false
+  },  
+  "cargo": {
+    "enabled": false
+  },
+  "npm": {
+    "enabled": false
+  },
+  "docker-compose": {
+    "enabled": false
+  }
 }
