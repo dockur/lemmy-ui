@@ -88,7 +88,7 @@ importers:
         version: 9.0.5
       i18next:
         specifier: ^23.11.5
-        version: 23.12.1
+        version: 23.12.2
       inferno:
         specifier: ^8.2.3
         version: 8.2.3
@@ -275,7 +275,7 @@ importers:
         version: 15.8.0
       husky:
         specifier: ^9.0.11
-        version: 9.1.0
+        version: 9.1.1
       import-sort-style-module:
         specifier: ^6.0.0
         version: 6.0.0
@@ -2647,8 +2647,8 @@ packages:
     resolution: {integrity: sha512-AXcZb6vzzrFAUE61HnN4mpLqd/cSIwNQjtNWR0euPm6y0iqx3G4gOXaIDdtdDwZmhwe82LA6+zinmW4UBWVePQ==}
     engines: {node: '>=16.17.0'}
 
-  husky@9.1.0:
-    resolution: {integrity: sha512-8XCjbomYTGdNF2h50dio3T3zghmZ9f/ZNzr99YwSkvDdhEjJGs5qzy8tbFx+SG8yCx2wn9nMVfZxVrr/yT8gNQ==}
+  husky@9.1.1:
+    resolution: {integrity: sha512-fCqlqLXcBnXa/TJXmT93/A36tJsjdJkibQ1MuIiFyCCYUlpYpIaj2mv1w+3KR6Rzu1IC3slFTje5f6DUp2A2rg==}
     engines: {node: '>=18'}
     hasBin: true
 
@@ -2656,8 +2656,8 @@ packages:
     resolution: {integrity: sha512-Y93lCzHYgGWdrJ66yIktxiaGULYc6oGiABxhcO5AufBeOyoIdZF7bIfLaOrbM0iGIOXQQgxxRrFEnb+Y6w1n4A==}
     engines: {node: '>=10.18'}
 
-  i18next@23.12.1:
-    resolution: {integrity: sha512-l4y291ZGRgUhKuqVSiqyuU2DDzxKStlIWSaoNBR4grYmh0X+pRYbFpTMs3CnJ5ECKbOI8sQcJ3PbTUfLgPRaMA==}
+  i18next@23.12.2:
+    resolution: {integrity: sha512-XIeh5V+bi8SJSWGL3jqbTEBW5oD6rbP5L+E7dVQh1MNTxxYef0x15rhJVcRb7oiuq4jLtgy2SD8eFlf6P2cmqg==}
 
   iconv-lite@0.4.24:
     resolution: {integrity: sha512-v3MXnZAcvnywkTUEZomIActle7RXXeedOR31wwl7VlyoXO4Qi9arvSenNQWne1TcRwhCL1HwLI21bEqdpj8/rA==}
@@ -7502,11 +7502,11 @@ snapshots:
 
   human-signals@5.0.0: {}
 
-  husky@9.1.0: {}
+  husky@9.1.1: {}
 
   hyperdyperid@1.2.0: {}
 
-  i18next@23.12.1:
+  i18next@23.12.2:
     dependencies:
       '@babel/runtime': 7.24.8
 
