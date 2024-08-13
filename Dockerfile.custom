@@ -1,4 +1,4 @@
-FROM node:alpine as builder
+FROM node:alpine AS builder
 
 # Added vips-dev and pkgconfig so that local vips is used instead of prebuilt
 # Done for two reasons:
@@ -43,7 +43,7 @@ RUN rm -rf ./node_modules/import-sort-parser-typescript
 RUN rm -rf ./node_modules/typescript
 RUN rm -rf ./node_modules/npm
 
-FROM node:alpine as runner
+FROM node:alpine AS runner
 ENV NODE_ENV=production
 
 RUN apk update && apk add --no-cache curl vips-cpp && rm -rf /var/cache/apk/*
