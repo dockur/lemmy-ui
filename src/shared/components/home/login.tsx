@@ -15,7 +15,7 @@ import { toast } from "../../toast";
 import { HtmlTags } from "../common/html-tags";
 import { Spinner } from "../common/icon";
 import PasswordInput from "../common/password-input";
-import TotpModal from "../common/totp-modal";
+import TotpModal from "../common/modal/totp-modal";
 import { UnreadCounterService } from "../../services";
 import { RouteData } from "../../interfaces";
 import { IRoutePropsWithFetch } from "../../routes";
@@ -57,11 +57,13 @@ async function handleLoginSuccess(i: Login, loginRes: LoginResponse) {
 
   const { prev } = i.props;
 
-  prev
-    ? i.props.history.replace(prev)
-    : i.props.history.action === "PUSH"
-      ? i.props.history.back()
-      : i.props.history.replace("/");
+  if (prev) {
+    i.props.history.replace(prev);
+  } else if (i.props.history.action === "PUSH") {
+    i.props.history.back();
+  } else {
+    i.props.history.replace("/");
+  }
 
   UnreadCounterService.Instance.updateAll();
 }
