@@ -60,4 +60,4 @@ The following environment variables can be used to configure lemmy-ui:
 [Pulls]: https://img.shields.io/docker/pulls/dockurr/lemmy-ui.svg?style=flat&label=pulls&logo=docker
 [Version]: https://img.shields.io/docker/v/dockurr/lemmy-ui/latest?arch=amd64&sort=semver&color=066da5
 [Package]: 
-https://img.shields.io/badge/dynamic/json?url=https%3A%2F%2Fraw.githubusercontent.com%2Fipitio%2Fbackage%2Fmaster%2Findex%2Fdockur%2Flemmy-ui%2Flemmy-ui.json&query=%24.downloads&logo=github&style=flat&color=066da5&label=pulls
+https://img.shields.io/badge/dynamic/json?url=https%3A%2F%2Fipitio.github.io%2Fbackage%2Fdockur%2Flemmy-ui%2Flemmy-ui.json&query=%24.downloads&logo=github&style=flat&color=066da5&label=pulls
