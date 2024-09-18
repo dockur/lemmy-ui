@@ -13,7 +13,7 @@ updates:
     schedule:
       interval: weekly   
     open-pull-requests-limit: 0
-  - package-ecosystem: yarn
+  - package-ecosystem: mix
     directory: /
     schedule:
       interval: weekly   
