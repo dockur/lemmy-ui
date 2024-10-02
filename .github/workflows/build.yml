@@ -82,7 +82,9 @@ jobs:
           git fetch upstream 2>/dev/null
           ahead=$(git rev-list --count upstream/${{ env.branch }}..${{ env.branch }})
           behind=$(git rev-list --count ${{ env.branch }}..upstream/${{ env.branch }})
-          #[[ "$behind" != "0" ]] && echo "Behind upstream: $behind commits" && exit 33
+          [[ "$behind" == "10" ]] && exit 0
+          echo "Behind upstream: $behind commits"
+          exit 33
       - 
         name: Lint Dockerfile
         if: env.exists == 'XXX'
