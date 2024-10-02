@@ -45,6 +45,7 @@ jobs:
           [[ "$latest_tag" = v* ]] && latest_tag="${latest_tag:1}"
           echo "Found tag: \"${latest_tag}\"" 
           echo "latest_tag=$latest_tag" >> $GITHUB_ENV
+          echo "branch=release/v0.19" >> $GITHUB_ENV
       - 
         name: Check if the tag exists locally
         uses: action-pack/tag-exists@v1
@@ -71,16 +72,16 @@ jobs:
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
-          ref: 'release/v0.19'
+          ref: '${{ env.branch }}'
       -
         name: Check if behind
         run: |
           #!/bin/bash
           git remote add upstream https://github.com/LemmyNet/lemmy-ui.git
           git fetch upstream
-          ahead=$(git rev-list --count release/v0.19..upstream/release/v0.19)
-          behind=$(git rev-list --count upstream/release/v0.19..release/v0.19)
-          echo "ahead: $ahead behind: $behind"
+          ahead=$(git rev-list --count "upstream/${{ env.branch }}..${{ env.branch }}")
+          behind=$(git rev-list --count "${{ env.branch }}..upstream/${{ env.branch }}")
+          echo "ahead: $ahead    behind: $behind"
           exit 33
       - 
         name: Lint Dockerfile
@@ -191,7 +192,7 @@ jobs:
           tag: "v${{ steps.meta.outputs.version }}"
           title: "v${{ steps.meta.outputs.version }}"
           token: ${{ secrets.REPO_ACCESS_TOKEN }}
-          commit: 'release/v0.19'
+          commit: '${{ env.branch }}'
       -
         name: Send mail
         if: env.exists == 'false'
