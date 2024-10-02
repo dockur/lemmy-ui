@@ -194,7 +194,6 @@ jobs:
           tag: "v${{ steps.meta.outputs.version }}"
           title: "v${{ steps.meta.outputs.version }}"
           token: ${{ secrets.REPO_ACCESS_TOKEN }}
-          commit: '${{ env.branch }}'
       -
         name: Send mail
         if: env.exists == 'false'
