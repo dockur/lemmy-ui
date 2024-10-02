@@ -78,7 +78,7 @@ jobs:
         if: env.exists == 'false'
         run: |
           #!/bin/bash
-          git remote add upstream https://github.com/LemmyNet/lemmy-ui.git
+          git remote add upstream https://github.com/lemmynet/${{ github.event.repository.name }}.git
           git fetch upstream 2>/dev/null
           ahead=$(git rev-list --count upstream/${{ env.branch }}..${{ env.branch }})
           behind=$(git rev-list --count ${{ env.branch }}..upstream/${{ env.branch }})
