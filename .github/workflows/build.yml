@@ -78,11 +78,11 @@ jobs:
         if: env.exists == 'false'
         run: |
           #!/bin/bash
-          git remote add upstream https://github.com/LemmyNet/lemmy-ui.git > /dev/null
-          git fetch upstream
+          git remote add upstream https://github.com/LemmyNet/lemmy-ui.git
+          git fetch --quiet upstream 
           ahead=$(git rev-list --count "upstream/${{ env.branch }}..${{ env.branch }}")
           behind=$(git rev-list --count "${{ env.branch }}..upstream/${{ env.branch }}")
-          [[ "$behind" != "10" ]] && echo "Behind upstream: $behind commits" && exit 33
+          [[ "$behind" != "0" ]] && echo "Behind upstream: $behind commits" && exit 33
       - 
         name: Lint Dockerfile
         if: env.exists == 'XXX'
