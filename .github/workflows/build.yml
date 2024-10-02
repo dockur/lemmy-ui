@@ -77,7 +77,7 @@ jobs:
         run: |
           #!/bin/bash
           git remote update
-          git status -uno 
+          git remote show origin
           exit 33
       - 
         name: Lint Dockerfile
