@@ -46,6 +46,7 @@ jobs:
           echo "Found tag: \"${latest_tag}\"" 
           echo "latest_tag=$latest_tag" >> $GITHUB_ENV
           echo "branch=release/v0.19" >> $GITHUB_ENV
+          echo "remote=https://github.com/lemmynet/${{ github.event.repository.name }}.git" >> $GITHUB_ENV
       - 
         name: Check if the tag exists locally
         uses: action-pack/tag-exists@v1
@@ -78,7 +79,7 @@ jobs:
         if: env.exists == 'false'
         run: |
           #!/bin/bash
-          git remote add upstream https://github.com/lemmynet/${{ github.event.repository.name }}.git
+          git remote add upstream ${{ env.remote }}
           git fetch upstream 2>/dev/null
           ahead=$(git rev-list --count upstream/${{ env.branch }}..${{ env.branch }})
           behind=$(git rev-list --count ${{ env.branch }}..upstream/${{ env.branch }})
@@ -135,7 +136,7 @@ jobs:
         if: env.exists == 'false'
         run: |
           git config --global url.https://github.com/.insteadOf git://github.com/
-          git clone --recurse-submodules -j8 https://github.com/lemmynet/${{ github.event.repository.name }}.git --single-branch --branch ${{ env.latest_tag }}
+          git clone --recurse-submodules -j8 ${{ env.remote }} --single-branch --branch ${{ env.latest_tag }}
           cp Dockerfile.custom ${{ github.event.repository.name }}/Dockerfile
       -
         name: Build Docker image
