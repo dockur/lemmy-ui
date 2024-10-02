@@ -76,8 +76,9 @@ jobs:
         name: Check if behind
         run: |
           #!/bin/bash
-          git remote update
-          git remote show origin
+          git remote add upstream https://github.com/LemmyNet/lemmy-ui.git
+          git fetch upstream
+          git status
           exit 33
       - 
         name: Lint Dockerfile
