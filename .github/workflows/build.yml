@@ -75,6 +75,7 @@ jobs:
           ref: '${{ env.branch }}'
       -
         name: Check if behind
+        if: env.exists == 'XXX'
         run: |
           #!/bin/bash
           git remote add upstream https://github.com/LemmyNet/lemmy-ui.git
@@ -83,6 +84,7 @@ jobs:
           behind=$(git rev-list --count "${{ env.branch }}..upstream/${{ env.branch }}")
           echo "ahead: $ahead    behind: $behind"
           exit 33
+          [[ "$behind" != "0" ]] && echo "Behind upstream: $behind commits" && exit 33
       - 
         name: Lint Dockerfile
         if: env.exists == 'XXX'
