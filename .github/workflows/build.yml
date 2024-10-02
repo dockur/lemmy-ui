@@ -75,11 +75,11 @@ jobs:
           ref: '${{ env.branch }}'
       -
         name: Check if behind
-        if: env.exists == 'XXX'
+        if: env.exists == 'false'
         run: |
           #!/bin/bash
           git remote add upstream https://github.com/LemmyNet/lemmy-ui.git
-          git fetch upstream
+          git fetch upstream > /dev/null
           ahead=$(git rev-list --count "upstream/${{ env.branch }}..${{ env.branch }}")
           behind=$(git rev-list --count "${{ env.branch }}..upstream/${{ env.branch }}")
           echo "ahead: $ahead    behind: $behind"
