@@ -76,7 +76,7 @@ jobs:
         name: Check if behind
         run: |
           #!/bin/bash
-          git status -sb
+          git status
           exit 33
       - 
         name: Lint Dockerfile
