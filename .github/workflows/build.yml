@@ -78,7 +78,7 @@ jobs:
           #!/bin/bash
           git remote add upstream https://github.com/LemmyNet/lemmy-ui.git
           git fetch upstream
-          git status
+          git rev-list --count release/v0.19..upstream/release/v0.19
           exit 33
       - 
         name: Lint Dockerfile
