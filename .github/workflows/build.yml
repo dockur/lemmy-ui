@@ -76,7 +76,7 @@ jobs:
         name: Check if behind
         run: |
           #!/bin/bash
-          git status
+          git rev-list --count release/v0.19..upstream/release/v0.19
           exit 33
       - 
         name: Lint Dockerfile
