@@ -139,7 +139,7 @@ jobs:
           cp Dockerfile.custom ${{ github.event.repository.name }}/Dockerfile
       -
         name: Build Docker image
-        if: env.exists == 'Xfalse'
+        if: env.exists == 'false'
         uses: docker/build-push-action@v6
         with:
           context: ./${{ github.event.repository.name }}
@@ -175,7 +175,7 @@ jobs:
           cp src/shared/components/app/navbar.tsx ${{ github.event.repository.name }}/src/shared/components/app/navbar.tsx
       -
         name: Build custom image
-        if: env.exists == 'Xfalse'
+        if: env.exists == 'false'
         uses: docker/build-push-action@v6
         with:
           context: ./${{ github.event.repository.name }}
