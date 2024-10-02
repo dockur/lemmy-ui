@@ -72,6 +72,12 @@ jobs:
         with:
           fetch-depth: 0
           ref: 'release/v0.19'
+      -
+        name: Check if behind
+        run: |
+          #!/bin/bash
+          git status -sb
+          exit 33
       - 
         name: Lint Dockerfile
         if: env.exists == 'XXX'
