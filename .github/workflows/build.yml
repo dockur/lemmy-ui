@@ -78,7 +78,9 @@ jobs:
           #!/bin/bash
           git remote add upstream https://github.com/LemmyNet/lemmy-ui.git
           git fetch upstream
-          git rev-list --count release/v0.19..upstream/release/v0.19
+          ahead=$(git rev-list --count release/v0.19..upstream/release/v0.19)
+          behind=$(git rev-list --count upstream/release/v0.19..release/v0.19)
+          echo "ahead: $ahead behind: $behind"
           exit 33
       - 
         name: Lint Dockerfile
