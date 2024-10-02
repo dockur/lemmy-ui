@@ -4,5 +4,9 @@ rules:
     upstream: LemmyNet:main
     mergeMethod: merge  # default value if this file does not exist is `hardreset`, effectively overwriting any downstream changes!
     mergeUnstable: false    # Optional, merge pull request even when the mergeable_state is not clean. Default: false
+  - base: release/v0.19
+    upstream: LemmyNet:release/v0.19
+    mergeMethod: merge  # default value if this file does not exist is `hardreset`, effectively overwriting any downstream changes!
+    mergeUnstable: false    # Optional, merge pull request even when the mergeable_state is not clean. Default: false
 label: ":arrow_heading_down: pull"  # Optional
 conflictLabel: "merge-conflict"     # Optional, on merge conflict assign a custom label, Default: merge-conflict
