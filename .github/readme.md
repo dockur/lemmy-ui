@@ -29,6 +29,7 @@ services:
       - LEMMY_UI_LEMMY_EXTERNAL_HOST=domain.tld
     ports:
       - 1234:1234
+    restart: always
     stop_grace_period: 1m
 ```
 
