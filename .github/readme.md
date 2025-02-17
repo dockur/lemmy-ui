@@ -21,8 +21,8 @@ Via Docker Compose:
 ```yaml
 services:
   lemmy-ui:
-    container_name: lemmy-ui
     image: dockurr/lemmy-ui
+    container_name: lemmy-ui
     environment:
       - LEMMY_UI_HTTPS=true
       - LEMMY_UI_LEMMY_INTERNAL_HOST=lemmy:8536
