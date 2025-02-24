@@ -43,16 +43,21 @@ jobs:
           [ -z "$latest_tag" ] && echo "Tag not found!" && exit 1
           [[ "$latest_tag" == "null" ]] && echo "Tag not found!" && exit 1
           [[ "$latest_tag" = v* ]] && latest_tag="${latest_tag:1}"
-          echo "Found tag: \"${latest_tag}\"" 
+          echo "Found tag: \"${latest_tag}\""
+          latest_version="${latest_tag%-*}"
+          major="${latest_version%%.*}"
+          minor="${latest_version#*.}"
+          minor="${minor%%.*}"
+          echo "branch=release/v1.00" >> $GITHUB_ENV
           echo "latest_tag=$latest_tag" >> $GITHUB_ENV
-          echo "branch=release/v0.19" >> $GITHUB_ENV
+          echo "latest_minor=$major.$minor" >> $GITHUB_ENV
           echo "remote=https://github.com/lemmynet/${{ github.event.repository.name }}.git" >> $GITHUB_ENV
       - 
         name: Check if the tag exists locally
         uses: action-pack/tag-exists@v1
         id: checkTag
         with: 
-          tag: 'v${{ env.latest_tag }}'         
+          tag: 'v${{ env.latest_tag }}'
       -
         name: Finish when found
         run: |
@@ -107,6 +112,7 @@ jobs:
             ${{ secrets.DOCKERHUB_REPO }}
             ghcr.io/${{ github.repository }}
           tags: |
+            type=raw,value=${{ env.latest_minor }},enable=${{ env.beta == 'false' }}
             type=raw,value=latest,priority=100,enable=${{ env.beta == 'false' }}
             type=raw,value=${{ env.latest_tag }}
           labels: |
@@ -163,6 +169,7 @@ jobs:
           images: |
             ${{ secrets.DOCKERHUB_CUSTOM }}
           tags: |
+            type=raw,value=${{ env.latest_minor }},enable=${{ env.beta == 'false' }}
             type=raw,value=latest,priority=100,enable=${{ env.beta == 'false' }}
             type=raw,value=${{ env.latest_tag }}
           labels: |
