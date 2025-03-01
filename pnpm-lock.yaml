@@ -94,13 +94,13 @@ importers:
         version: 8.2.3
       inferno-create-element:
         specifier: ^9.0.0
-        version: 9.0.2
+        version: 9.0.3
       inferno-helmet:
         specifier: ^5.2.1
         version: 5.2.1(inferno@8.2.3)
       inferno-hydrate:
         specifier: ^9.0.0
-        version: 9.0.2
+        version: 9.0.3
       inferno-i18next-dess:
         specifier: 0.0.2
         version: 0.0.2
@@ -169,10 +169,10 @@ importers:
         version: 2.14.0
       sass:
         specifier: ^1.77.8
-        version: 1.85.0
+        version: 1.85.1
       sass-loader:
         specifier: ^16.0.1
-        version: 16.0.5(sass@1.85.0)(webpack@5.98.0)
+        version: 16.0.5(sass@1.85.1)(webpack@5.98.0)
       serialize-javascript:
         specifier: ^6.0.2
         version: 6.0.2
@@ -236,7 +236,7 @@ importers:
         version: 2.0.10
       '@types/node':
         specifier: ^22.5.0
-        version: 22.13.7
+        version: 22.13.8
       '@types/path-browserify':
         specifier: ^1.0.3
         version: 1.0.3
@@ -1345,8 +1345,8 @@ packages:
   '@types/node-forge@1.3.11':
     resolution: {integrity: sha512-FQx220y22OKNTqaByeBGqHWYz4cl94tpcxeFdvBo3wjG6XPBuZ0BNgNZRV5J5TFmmcsJ4IzsLkmGRiQbnYsBEQ==}
 
-  '@types/node@22.13.7':
-    resolution: {integrity: sha512-oU2q+BsQldB9lYxHNp/5aZO+/Bs0Usa74Abo9mAKulz4ahQyXRHK6UVKYIN8KSC8HXwhWSi7b49JnX+txuac0w==}
+  '@types/node@22.13.8':
+    resolution: {integrity: sha512-G3EfaZS+iOGYWLLRCEAXdWK9my08oHNZ+FHluRiggIYJPOXzhOiDgpVCUHaUvyIC5/fj7C/p637jdzC666AOKQ==}
 
   '@types/path-browserify@1.0.3':
     resolution: {integrity: sha512-ZmHivEbNCBtAfcrFeBCiTjdIc2dey0l7oCGNGpSuRTy8jP6UVND7oUowlvDujBy8r2Hoa8bfFUOCiPWfmtkfxw==}
@@ -2793,14 +2793,14 @@ packages:
   inferno-create-element@8.2.3:
     resolution: {integrity: sha512-YEwX4OiFlgeTutvE16uCGxkaSVwZ1DklpAPX8okjVsGaLIWQrM8QIQFxn3mTLWSu70Uea+afQfKL5wE4hxn39Q==}
 
-  inferno-create-element@9.0.2:
-    resolution: {integrity: sha512-nveSzCGA94PlqODwiV+5aPmhqONHYSD0SWFUUlQ71VEE8niSJhRZj0uNYRz+Dh4xAxzEKz9ZQdjVCkelnTYeKw==}
+  inferno-create-element@9.0.3:
+    resolution: {integrity: sha512-NIUTvcGaR7d1el1uraUrDBUJ2/de6T2wsjmaFAbZfjspMx6y5336mMRknAJsi/ZYgjaaxyCDJ3KImUdwG2Nmsg==}
 
   inferno-helmet@5.2.1:
     resolution: {integrity: sha512-9xzUGENVoz8qk67s0UhHlGNGZKG9Ia0mk5KoCNgkkIcGNhk7mNIINm7jJ5OOigVetz2DwI94jHzouTggb49AJg==}
 
-  inferno-hydrate@9.0.2:
-    resolution: {integrity: sha512-RUOzyPZukYVd6euoQ/T1gujj2PJM/W7AWDloO4CYTizV03qLNKGIHpApe8cs2IaCDyE/+SAIHgQR2kGfkL8J1w==}
+  inferno-hydrate@9.0.3:
+    resolution: {integrity: sha512-XvWgoxOFTuXIhBftNoLbKsaHtlC9p5iwzabp62bSwWFHQCikG9suEn87G+4s9C0ieeYLP+jaibcJYg/VGEmIow==}
 
   inferno-i18next-dess@0.0.2:
     resolution: {integrity: sha512-TkpBTZzfqgK7O8gIJ7gLB9CvP1bEOfO8OA7vUfJpd2kgGom9eoj6xbAMUPk5BNH6nBN5Y+mCaG/dInQjW5Jkug==}
@@ -2829,11 +2829,17 @@ packages:
   inferno-vnode-flags@9.0.2:
     resolution: {integrity: sha512-DWsKLdpMoX8ahn/wu5O9vS57AL/+OFYjdiXVrQfWFiYhSF19yUZCkb0IzhUuZDPN/GXqkm2M4TI+X2TkRAaRMA==}
 
+  inferno-vnode-flags@9.0.3:
+    resolution: {integrity: sha512-YCvln+7fcDNDKmcv6teXmcIslzYf8wqkPbg27cvtxKoSAN1wq9JyotJpsmpoqnbqLPzYe900Ir//M5xrOxsTFw==}
+
   inferno@8.2.3:
     resolution: {integrity: sha512-LMeRlCe+RlXw8kHCLyOWRk2PsZ3Fo4jkESyAR1g4FfPT48N78i11YhTVXW2ukCx5MFjv+qrfa73JzJWU9sg4CQ==}
 
   inferno@9.0.2:
     resolution: {integrity: sha512-jN1hz3IInNyt+G37b2SULfAyK8Mrbh2Az+OLYQYW2zKIue0TOoNKWh1umyNyomwMrG5vjHQu275CUOPPoTIWCQ==}
+
+  inferno@9.0.3:
+    resolution: {integrity: sha512-qW48Uan8UGtVTxKt04IJB2QkYnNo/Zqh/myxH5wlfZM8QNexHzgIOVnCvzAdFerXpIDrIDUiHgrOZR9ONMIHgg==}
 
   inflight@1.0.6:
     resolution: {integrity: sha512-k92I/b08q4wvFscXCLvqfsHCrjrF7yiXsQuIVvVE7N82W3+aqpzuUdBbfhWcy/FZR3/4IgflMgKLOsvPDrGCJA==}
@@ -4173,8 +4179,8 @@ packages:
       webpack:
         optional: true
 
-  sass@1.85.0:
-    resolution: {integrity: sha512-3ToiC1xZ1Y8aU7+CkgCI/tqyuPXEmYGJXO7H4uqp0xkLXUqp88rQQ4j1HmP37xSJLbCJPaIiv+cT1y+grssrww==}
+  sass@1.85.1:
+    resolution: {integrity: sha512-Uk8WpxM5v+0cMR0XjX9KfRIacmSG86RH4DCCZjLU2rFh5tyutt9siAXJ7G+YfxQ99Q6wrRMbMlVl6KqUms71ag==}
     engines: {node: '>=14.0.0'}
     hasBin: true
 
@@ -6031,11 +6037,11 @@ snapshots:
   '@types/body-parser@1.19.5':
     dependencies:
       '@types/connect': 3.4.38
-      '@types/node': 22.13.7
+      '@types/node': 22.13.8
 
   '@types/bonjour@3.5.13':
     dependencies:
-      '@types/node': 22.13.7
+      '@types/node': 22.13.8
 
   '@types/bootstrap@5.2.10':
     dependencies:
@@ -6044,11 +6050,11 @@ snapshots:
   '@types/connect-history-api-fallback@1.5.4':
     dependencies:
       '@types/express-serve-static-core': 5.0.0
-      '@types/node': 22.13.7
+      '@types/node': 22.13.8
 
   '@types/connect@3.4.38':
     dependencies:
-      '@types/node': 22.13.7
+      '@types/node': 22.13.8
 
   '@types/cookie-parser@1.4.8(@types/express@4.17.21)':
     dependencies:
@@ -6074,14 +6080,14 @@ snapshots:
 
   '@types/express-serve-static-core@4.19.6':
     dependencies:
-      '@types/node': 22.13.7
+      '@types/node': 22.13.8
       '@types/qs': 6.9.16
       '@types/range-parser': 1.2.7
       '@types/send': 0.17.4
 
   '@types/express-serve-static-core@5.0.0':
     dependencies:
-      '@types/node': 22.13.7
+      '@types/node': 22.13.8
       '@types/qs': 6.9.16
       '@types/range-parser': 1.2.7
       '@types/send': 0.17.4
@@ -6096,7 +6102,7 @@ snapshots:
   '@types/glob@7.2.0':
     dependencies:
       '@types/minimatch': 5.1.2
-      '@types/node': 22.13.7
+      '@types/node': 22.13.8
 
   '@types/html-to-text@9.0.4': {}
 
@@ -6104,7 +6110,7 @@ snapshots:
 
   '@types/http-proxy@1.17.15':
     dependencies:
-      '@types/node': 22.13.7
+      '@types/node': 22.13.8
 
   '@types/json-schema@7.0.15': {}
 
@@ -6133,9 +6139,9 @@ snapshots:
 
   '@types/node-forge@1.3.11':
     dependencies:
-      '@types/node': 22.13.7
+      '@types/node': 22.13.8
 
-  '@types/node@22.13.7':
+  '@types/node@22.13.8':
     dependencies:
       undici-types: 6.20.0
 
@@ -6158,7 +6164,7 @@ snapshots:
 
   '@types/resolve@1.17.1':
     dependencies:
-      '@types/node': 22.13.7
+      '@types/node': 22.13.8
 
   '@types/retry@0.12.2': {}
 
@@ -6169,7 +6175,7 @@ snapshots:
   '@types/send@0.17.4':
     dependencies:
       '@types/mime': 1.3.5
-      '@types/node': 22.13.7
+      '@types/node': 22.13.8
 
   '@types/serialize-javascript@5.0.4': {}
 
@@ -6180,12 +6186,12 @@ snapshots:
   '@types/serve-static@1.15.7':
     dependencies:
       '@types/http-errors': 2.0.4
-      '@types/node': 22.13.7
+      '@types/node': 22.13.8
       '@types/send': 0.17.4
 
   '@types/sockjs@0.3.36':
     dependencies:
-      '@types/node': 22.13.7
+      '@types/node': 22.13.8
 
   '@types/toastify-js@1.12.3': {}
 
@@ -6193,7 +6199,7 @@ snapshots:
 
   '@types/ws@8.5.12':
     dependencies:
-      '@types/node': 22.13.7
+      '@types/node': 22.13.8
 
   '@typescript-eslint/eslint-plugin@8.24.1(@typescript-eslint/parser@8.24.1(eslint@9.21.0)(typescript@5.7.3))(eslint@9.21.0)(typescript@5.7.3)':
     dependencies:
@@ -7859,9 +7865,9 @@ snapshots:
     dependencies:
       inferno: 8.2.3
 
-  inferno-create-element@9.0.2:
+  inferno-create-element@9.0.3:
     dependencies:
-      inferno: 9.0.2
+      inferno: 9.0.3
 
   inferno-helmet@5.2.1(inferno@8.2.3):
     dependencies:
@@ -7871,9 +7877,9 @@ snapshots:
     transitivePeerDependencies:
       - inferno
 
-  inferno-hydrate@9.0.2:
+  inferno-hydrate@9.0.3:
     dependencies:
-      inferno: 9.0.2
+      inferno: 9.0.3
 
   inferno-i18next-dess@0.0.2:
     dependencies:
@@ -7908,6 +7914,8 @@ snapshots:
 
   inferno-vnode-flags@9.0.2: {}
 
+  inferno-vnode-flags@9.0.3: {}
+
   inferno@8.2.3:
     dependencies:
       csstype: 3.1.3
@@ -7918,6 +7926,12 @@ snapshots:
     dependencies:
       csstype: 3.1.3
       inferno-vnode-flags: 9.0.2
+      opencollective-postinstall: 2.0.3
+
+  inferno@9.0.3:
+    dependencies:
+      csstype: 3.1.3
+      inferno-vnode-flags: 9.0.3
       opencollective-postinstall: 2.0.3
 
   inflight@1.0.6:
@@ -8210,13 +8224,13 @@ snapshots:
 
   jest-worker@26.6.2:
     dependencies:
-      '@types/node': 22.13.7
+      '@types/node': 22.13.8
       merge-stream: 2.0.0
       supports-color: 7.2.0
 
   jest-worker@27.5.1:
     dependencies:
-      '@types/node': 22.13.7
+      '@types/node': 22.13.8
       merge-stream: 2.0.0
       supports-color: 8.1.1
 
@@ -9069,14 +9083,14 @@ snapshots:
       parse-srcset: 1.0.2
       postcss: 8.4.49
 
-  sass-loader@16.0.5(sass@1.85.0)(webpack@5.98.0):
+  sass-loader@16.0.5(sass@1.85.1)(webpack@5.98.0):
     dependencies:
       neo-async: 2.6.2
     optionalDependencies:
-      sass: 1.85.0
+      sass: 1.85.1
       webpack: 5.98.0(webpack-cli@6.0.1)
 
-  sass@1.85.0:
+  sass@1.85.1:
     dependencies:
       chokidar: 4.0.3
       immutable: 5.0.3
