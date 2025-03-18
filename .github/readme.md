@@ -16,7 +16,7 @@ Multi-platform docker image of [Lemmy UI](https://github.com/LemmyNet/lemmy-ui),
 
 ## Usage  🐳
 
-Via Docker Compose:
+##### Via Docker Compose:
 
 ```yaml
 services:
@@ -33,7 +33,7 @@ services:
     stop_grace_period: 1m
 ```
 
-Via Docker CLI:
+##### Via Docker CLI:
 
 ```bash
 docker run -it --rm --name lemmy-ui -p 1234:1234 -e "LEMMY_UI_LEMMY_INTERNAL_HOST=lemmy:8536" -e "LEMMY_UI_LEMMY_EXTERNAL_HOST=domain.tld" --stop-timeout 60 dockurr/lemmy-ui
