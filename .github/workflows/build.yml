@@ -114,7 +114,7 @@ jobs:
           tags: |
             type=raw,value=${{ env.latest_minor }},enable=${{ env.beta == 'false' }}
             type=raw,value=latest,priority=100,enable=${{ env.beta == 'false' }}
-            type=raw,value=${{ env.latest_tag }}
+            type=raw,value=${{ env.latest_tag }},priority=250
           labels: |
             org.opencontainers.image.title=${{ vars.NAME }}
         env:
