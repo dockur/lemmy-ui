@@ -48,7 +48,7 @@ jobs:
           major="${latest_version%%.*}"
           minor="${latest_version#*.}"
           minor="${minor%%.*}"
-          echo "branch=release/0.19" >> $GITHUB_ENV
+          echo "branch=release/v0.19" >> $GITHUB_ENV
           echo "latest_tag=$latest_tag" >> $GITHUB_ENV
           echo "latest_minor=$major.$minor" >> $GITHUB_ENV
           echo "remote=https://github.com/lemmynet/${{ github.event.repository.name }}.git" >> $GITHUB_ENV
