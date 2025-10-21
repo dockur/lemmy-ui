@@ -36,7 +36,7 @@ services:
 ##### Via Docker CLI:
 
 ```bash
-docker run -it --rm --name lemmy-ui -p 1234:1234 -e "LEMMY_UI_LEMMY_INTERNAL_HOST=lemmy:8536" -e "LEMMY_UI_LEMMY_EXTERNAL_HOST=domain.tld" --stop-timeout 60 dockurr/lemmy-ui
+docker run -it --rm --name lemmy-ui -p 1234:1234 -e "LEMMY_UI_LEMMY_INTERNAL_HOST=lemmy:8536" -e "LEMMY_UI_LEMMY_EXTERNAL_HOST=domain.tld" --stop-timeout 60 docker.io/dockurr/lemmy-ui
 ```
 
 ## Configuration ⚙️
