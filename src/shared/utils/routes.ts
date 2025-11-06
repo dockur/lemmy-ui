@@ -19,7 +19,11 @@ import {
   HomeFetchConfig,
   getHomeQueryParams,
 } from "@components/home/home";
-import { Instances, InstancesFetchConfig } from "@components/home/instances";
+import {
+  getInstancesQueryParams,
+  Instances,
+  InstancesFetchConfig,
+} from "@components/home/instances";
 import { Legal } from "@components/home/legal";
 import {
   Login,
@@ -88,6 +92,11 @@ import {
   OAuthCallbackConfig,
   getOAuthCallbackQueryParams,
 } from "@components/home/oauth/oauth-callback";
+import {
+  getPendingFollowsQueryParams,
+  PendingFollows,
+  PendingFollowsFetchConfig,
+} from "@components/community/pending-follows";
 
 export interface IRoutePropsWithFetch<
   DataT extends RouteData,
@@ -221,6 +230,12 @@ export const routes: IRoutePropsWithFetch<RouteData, any, any>[] = [
     getQueryParams: getRegistrationApplicationQueryParams,
   } as RegistrationApplicationsFetchConfig,
   {
+    path: `/pending_follows`,
+    component: PendingFollows,
+    fetchInitialData: PendingFollows.fetchInitialData,
+    getQueryParams: getPendingFollowsQueryParams,
+  } as PendingFollowsFetchConfig,
+  {
     path: `/search`,
     component: Search,
     fetchInitialData: Search.fetchInitialData,
@@ -244,6 +259,7 @@ export const routes: IRoutePropsWithFetch<RouteData, any, any>[] = [
     path: `/instances`,
     component: Instances,
     fetchInitialData: Instances.fetchInitialData,
+    getQueryParams: getInstancesQueryParams,
   } as InstancesFetchConfig,
   { path: `/legal`, component: Legal },
   {
