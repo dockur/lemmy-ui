@@ -1,6 +1,5 @@
 import {
   buildCommentsTree,
-  commentsToFlatNodes,
   editPersonNotes,
   editCommentSlim,
   enableNsfw,
@@ -25,7 +24,7 @@ import {
 } from "@utils/helpers";
 import { scrollMixin } from "../mixins/scroll-mixin";
 import { isImage } from "@utils/media";
-import { QueryParams, RouteDataResponse } from "@utils/types";
+import { CommentNodeType, QueryParams, RouteDataResponse } from "@utils/types";
 import classNames from "classnames";
 import { Component, createRef, linkEvent } from "inferno";
 import {
@@ -35,7 +34,7 @@ import {
   BanFromCommunity,
   BanFromCommunityResponse,
   BanPerson,
-  BanPersonResponse,
+  PersonResponse,
   BlockCommunity,
   BlockPerson,
   CommentId,
@@ -72,6 +71,7 @@ import {
   NotePerson,
   PostNotificationsMode,
   PostResponse,
+  PostView,
   PurgeComment,
   PurgeCommunity,
   PurgePerson,
@@ -84,13 +84,12 @@ import {
   SuccessResponse,
   TransferCommunity,
   UpdateCommunityNotifications,
+  CommentSlimView,
+  PersonId,
+  Community,
 } from "lemmy-js-client";
 import { commentTreeMaxDepth } from "@utils/config";
-import {
-  CommentNodeI,
-  CommentViewType,
-  InitialFetchRequest,
-} from "@utils/types";
+import { CommentViewType, InitialFetchRequest } from "@utils/types";
 import { FirstLoadService } from "@services/FirstLoadService";
 import { I18NextService } from "@services/I18NextService";
 import {
@@ -114,6 +113,7 @@ import { compareAsc, compareDesc } from "date-fns";
 import { nowBoolean } from "@utils/date";
 import { NoOptionI18nKeys } from "i18next";
 import { PostNotificationSelect } from "@components/common/notification-select";
+import { Link } from "inferno-router";
 
 const commentsShownInterval = 15;
 
@@ -131,6 +131,7 @@ interface PostState {
   isIsomorphic: boolean;
   lastCreatedCommentId?: CommentId;
   notifications: PostNotificationsMode;
+  editLoading: boolean;
 }
 
 function getCommentSortTypeFromQuery(
@@ -141,11 +142,11 @@ function getCommentSortTypeFromQuery(
     return fallback;
   }
   switch (source) {
-    case "Hot":
-    case "Top":
-    case "New":
-    case "Old":
-    case "Controversial":
+    case "hot":
+    case "top":
+    case "new":
+    case "old":
+    case "controversial":
       return source;
     default:
       return fallback;
@@ -168,14 +169,14 @@ function getQueryStringFromCommentSortType(
   return sort;
 }
 
-const defaultCommentView: CommentViewType = CommentViewType.Tree;
+const defaultCommentView: CommentViewType = "tree";
 
 function getCommentViewTypeFromQuery(source?: string): CommentViewType {
   switch (source) {
     case "Tree":
-      return CommentViewType.Tree;
+      return "tree";
     case "Flat":
-      return CommentViewType.Flat;
+      return "flat";
     default:
       return defaultCommentView;
   }
@@ -188,9 +189,9 @@ function getQueryStringFromCommentView(
     return undefined;
   }
   switch (view) {
-    case CommentViewType.Tree:
+    case "tree":
       return "Tree";
-    case CommentViewType.Flat:
+    case "flat":
       return "Flat";
     default:
       return undefined;
@@ -254,7 +255,8 @@ export class Post extends Component<PostRouteProps, PostState> {
     showSidebarMobile: false,
     maxCommentsShown: commentsShownInterval,
     isIsomorphic: false,
-    notifications: "RepliesAndMentions",
+    notifications: "replies_and_mentions",
+    editLoading: false,
   };
 
   loadingSettled() {
@@ -324,7 +326,7 @@ export class Post extends Component<PostRouteProps, PostState> {
         ...this.state,
         notifications:
           this.state.postRes.data.post_view.post_actions?.notifications ??
-          "RepliesAndMentions",
+          "replies_and_mentions",
       };
     }
   }
@@ -344,7 +346,7 @@ export class Post extends Component<PostRouteProps, PostState> {
         this.setState({
           notifications:
             this.state.postRes.data.post_view.post_actions?.notifications ??
-            "RepliesAndMentions",
+            "replies_and_mentions",
         });
       }
     }
@@ -360,7 +362,7 @@ export class Post extends Component<PostRouteProps, PostState> {
       parent_id: getCommentIdFromProps(props),
       max_depth: commentTreeMaxDepth,
       sort,
-      type_: "All",
+      type_: "all",
     });
     if (token === this.fetchCommentsToken) {
       this.setState({ commentsRes });
@@ -368,6 +370,15 @@ export class Post extends Component<PostRouteProps, PostState> {
   }
 
   updateUrl(props: PartialPostRouteProps, replace = false) {
+    const location = this.buildUrl(props);
+    if (replace || this.props.location.pathname === location.pathname) {
+      this.props.history.replace(location);
+    } else {
+      this.props.history.push(location);
+    }
+  }
+
+  buildUrl(props: PartialPostRouteProps): { pathname: string; search: string } {
     const {
       view,
       sort,
@@ -398,12 +409,7 @@ export class Post extends Component<PostRouteProps, PostState> {
       pathname = `/post/${post_id}`;
     }
 
-    const location = { pathname, search: getQueryString(query) };
-    if (replace || this.props.location.pathname === pathname) {
-      this.props.history.replace(location);
-    } else {
-      this.props.history.push(location);
-    }
+    return { pathname, search: getQueryString(query) };
   }
 
   static async fetchInitialData({
@@ -427,7 +433,7 @@ export class Post extends Component<PostRouteProps, PostState> {
       parent_id: commentId,
       max_depth: commentTreeMaxDepth,
       sort,
-      type_: "All",
+      type_: "all",
     };
 
     const [postRes, commentsRes] = await Promise.all([
@@ -600,10 +606,10 @@ export class Post extends Component<PostRouteProps, PostState> {
                 description={res.post_view.post.body}
               />
               <PostListing
-                post_view={res.post_view}
+                postView={res.post_view}
                 crossPosts={res.cross_posts}
-                showDupes="Expanded"
-                showBody
+                showCrossPosts="expanded"
+                showBody="full"
                 showCommunity
                 admins={siteRes.admins}
                 enableNsfw={enableNsfw(siteRes)}
@@ -612,7 +618,12 @@ export class Post extends Component<PostRouteProps, PostState> {
                 siteLanguages={siteRes.discussion_languages}
                 myUserInfo={this.isoData.myUserInfo}
                 localSite={siteRes.site_view.local_site}
+                hideImage={false}
+                viewOnly={false}
+                disableAutoMarkAsRead={false}
+                editLoading={this.state.editLoading}
                 onBlockPerson={this.handleBlockPerson}
+                onBlockCommunity={this.handleBlockCommunity}
                 onPostEdit={this.handlePostEdit}
                 onPostVote={this.handlePostVote}
                 onPostReport={this.handlePostReport}
@@ -631,9 +642,9 @@ export class Post extends Component<PostRouteProps, PostState> {
                 onHidePost={this.handleHidePost}
                 onScrollIntoCommentsClick={this.handleScrollIntoCommentsClick}
                 markable
-                read={!!res.post_view.post_actions?.read_at}
                 onMarkPostAsRead={this.handleMarkPostAsRead}
                 onPersonNote={this.handlePersonNote}
+                postListingMode="small_card"
               />
               <div ref={this.commentSectionRef} className="mb-2" />
 
@@ -649,12 +660,13 @@ export class Post extends Component<PostRouteProps, PostState> {
                     // reset on new location, otherwise <Prompt /> stops working
                   }
                   node={res.post_view.post.id}
-                  disabled={res.post_view.post.locked}
+                  disabled={postLockedDeletedOrRemoved(res.post_view)}
                   allLanguages={siteRes.all_languages}
                   siteLanguages={siteRes.discussion_languages}
                   containerClass="post-comment-container"
                   myUserInfo={this.isoData.myUserInfo}
-                  onUpsertComment={this.handleCreateToplevelComment}
+                  onCreateComment={this.handleCreateToplevelComment}
+                  onEditComment={() => {}}
                 />
               )}
               <div className="d-block d-md-none">
@@ -676,7 +688,7 @@ export class Post extends Component<PostRouteProps, PostState> {
               </div>
               <div className="col-12 d-flex flex-wrap">
                 {this.sortRadios()}
-                <div class="flex-grow-1"></div>
+                <div className="flex-grow-1"></div>
                 <div className="btn-group w-auto mb-2" role="group">
                   <PostNotificationSelect
                     current={this.state.notifications}
@@ -684,8 +696,8 @@ export class Post extends Component<PostRouteProps, PostState> {
                   />
                 </div>
               </div>
-              {this.props.view === CommentViewType.Tree && this.commentsTree()}
-              {this.props.view === CommentViewType.Flat && this.commentsFlat()}
+              {this.props.view === "tree" && this.commentsTree()}
+              {this.props.view === "flat" && this.commentsFlat()}
             </div>
             <aside className="d-none d-md-block col-md-4 col-lg-3">
               {this.sidebar()}
@@ -716,14 +728,14 @@ export class Post extends Component<PostRouteProps, PostState> {
             id={`${radioId}-hot`}
             type="radio"
             className="btn-check"
-            value={"Hot"}
-            checked={this.props.sort === "Hot"}
+            value={"hot"}
+            checked={this.props.sort === "hot"}
             onChange={linkEvent(this, this.handleCommentSortChange)}
           />
           <label
             htmlFor={`${radioId}-hot`}
             className={classNames("btn btn-outline-secondary pointer", {
-              active: this.props.sort === "Hot",
+              active: this.props.sort === "hot",
             })}
           >
             {I18NextService.i18n.t("hot")}
@@ -732,14 +744,14 @@ export class Post extends Component<PostRouteProps, PostState> {
             id={`${radioId}-top`}
             type="radio"
             className="btn-check"
-            value={"Top"}
-            checked={this.props.sort === "Top"}
+            value={"top"}
+            checked={this.props.sort === "top"}
             onChange={linkEvent(this, this.handleCommentSortChange)}
           />
           <label
             htmlFor={`${radioId}-top`}
             className={classNames("btn btn-outline-secondary pointer", {
-              active: this.props.sort === "Top",
+              active: this.props.sort === "top",
             })}
           >
             {I18NextService.i18n.t("top")}
@@ -748,14 +760,14 @@ export class Post extends Component<PostRouteProps, PostState> {
             id={`${radioId}-controversial`}
             type="radio"
             className="btn-check"
-            value={"Controversial"}
-            checked={this.props.sort === "Controversial"}
+            value={"controversial"}
+            checked={this.props.sort === "controversial"}
             onChange={linkEvent(this, this.handleCommentSortChange)}
           />
           <label
             htmlFor={`${radioId}-controversial`}
             className={classNames("btn btn-outline-secondary pointer", {
-              active: this.props.sort === "Controversial",
+              active: this.props.sort === "controversial",
             })}
           >
             {I18NextService.i18n.t("controversial")}
@@ -764,14 +776,14 @@ export class Post extends Component<PostRouteProps, PostState> {
             id={`${radioId}-new`}
             type="radio"
             className="btn-check"
-            value={"New"}
-            checked={this.props.sort === "New"}
+            value={"new"}
+            checked={this.props.sort === "new"}
             onChange={linkEvent(this, this.handleCommentSortChange)}
           />
           <label
             htmlFor={`${radioId}-new`}
             className={classNames("btn btn-outline-secondary pointer", {
-              active: this.props.sort === "New",
+              active: this.props.sort === "new",
             })}
           >
             {I18NextService.i18n.t("new")}
@@ -780,14 +792,14 @@ export class Post extends Component<PostRouteProps, PostState> {
             id={`${radioId}-old`}
             type="radio"
             className="btn-check"
-            value={"Old"}
-            checked={this.props.sort === "Old"}
+            value={"old"}
+            checked={this.props.sort === "old"}
             onChange={linkEvent(this, this.handleCommentSortChange)}
           />
           <label
             htmlFor={`${radioId}-old`}
             className={classNames("btn btn-outline-secondary pointer", {
-              active: this.props.sort === "Old",
+              active: this.props.sort === "old",
             })}
           >
             {I18NextService.i18n.t("old")}
@@ -801,14 +813,14 @@ export class Post extends Component<PostRouteProps, PostState> {
             id={`${radioId}-chat`}
             type="radio"
             className="btn-check"
-            value={CommentViewType.Flat}
-            checked={this.props.view === CommentViewType.Flat}
+            value={"flat"}
+            checked={this.props.view === "flat"}
             onChange={linkEvent(this, this.handleCommentViewTypeChange)}
           />
           <label
             htmlFor={`${radioId}-chat`}
             className={classNames("btn btn-outline-secondary pointer", {
-              active: this.props.view === CommentViewType.Flat,
+              active: this.props.view === "flat",
             })}
           >
             {I18NextService.i18n.t("chat")}
@@ -836,24 +848,34 @@ export class Post extends Component<PostRouteProps, PostState> {
       return (
         <div>
           <CommentNodes
-            nodes={this.sortedFlatNodes()}
+            nodes={sortedFlatNodes(
+              commentsRes.data.comments,
+              postRes.data.post_view.post.creator_id,
+              postRes.data.community_view.community,
+              this.props.sort,
+            )}
+            showCommunity={false}
             postCreatorId={postRes.data.post_view.post.creator_id}
             community={postRes.data.community_view.community}
             viewType={this.props.view}
             maxCommentsShown={this.state.maxCommentsShown}
             isTopLevel
-            postLocked={postRes.data.post_view.post.locked}
+            postLockedOrRemovedOrDeleted={postLockedDeletedOrRemoved(
+              postRes.data.post_view,
+            )}
             admins={siteRes.admins}
             readCommentsAt={
               postRes.data.post_view.post_actions?.read_comments_at
             }
             showContext
+            hideImages={false}
             allLanguages={siteRes.all_languages}
             siteLanguages={siteRes.discussion_languages}
             myUserInfo={this.isoData.myUserInfo}
             localSite={siteRes.site_view.local_site}
             onSaveComment={this.handleSaveComment}
             onBlockPerson={this.handleBlockPerson}
+            onBlockCommunity={this.handleBlockCommunity}
             onDeleteComment={this.handleDeleteComment}
             onRemoveComment={this.handleRemoveComment}
             onCommentVote={this.handleCommentVote}
@@ -903,20 +925,6 @@ export class Post extends Component<PostRouteProps, PostState> {
     }
   }
 
-  sortedFlatNodes(): CommentNodeI[] {
-    if (this.state.commentsRes.state !== "success") {
-      return [];
-    }
-    const nodeToDate = (node: CommentNodeI) =>
-      node.comment_view.comment.published_at;
-    const nodes = commentsToFlatNodes(this.state.commentsRes.data.comments);
-    if (this.props.sort === "New") {
-      return nodes.sort((a, b) => compareDesc(nodeToDate(a), nodeToDate(b)));
-    } else {
-      return nodes.sort((a, b) => compareAsc(nodeToDate(a), nodeToDate(b)));
-    }
-  }
-
   commentsTree() {
     if (this.state.commentsRes.state === "loading") {
       return (
@@ -925,51 +933,66 @@ export class Post extends Component<PostRouteProps, PostState> {
         </div>
       );
     }
-
     const postRes = this.state.postRes;
-    const firstComment = this.commentTree().at(0)?.comment_view.comment;
-    const depth = getDepthFromComment(firstComment);
-    const showContextButton = depth ? depth > 0 : false;
+    const commentsRes = this.state.commentsRes;
     const siteRes = this.state.siteRes;
+    const commentIdFromProps = getCommentIdFromProps(this.props);
 
     return (
-      postRes.state === "success" && (
+      postRes.state === "success" &&
+      commentsRes.state === "success" && (
         <div>
           {!!getCommentIdFromProps(this.props) && (
             <>
-              <button
-                className="ps-0 d-block btn btn-link text-muted"
-                onClick={linkEvent(this, this.handleViewAllComments)}
+              <Link
+                className="ps-0 d-block btn btn-link text-muted text-start"
+                to={this.handleViewAllComments()}
               >
                 {I18NextService.i18n.t("view_all_comments")} ➔
-              </button>
-              {showContextButton && (
-                <button
-                  className="ps-0 d-block btn btn-link text-muted"
-                  onClick={linkEvent(this, this.handleViewContext)}
+              </Link>
+              {showContextButton(
+                commentsRes.data.comments,
+                postRes.data.post_view.post.creator_id,
+                postRes.data.community_view.community,
+                commentIdFromProps,
+              ) && (
+                <Link
+                  className="ps-0 d-block btn btn-link text-muted text-start"
+                  to={this.handleViewContext()}
                 >
                   {I18NextService.i18n.t("show_context")} ➔
-                </button>
+                </Link>
               )}
             </>
           )}
           <CommentNodes
-            nodes={this.commentTree()}
+            nodes={commentTree(
+              commentsRes.data.comments,
+              postRes.data.post_view.post.creator_id,
+              postRes.data.community_view.community,
+              commentIdFromProps,
+            )}
+            showCommunity={false}
             postCreatorId={postRes.data.post_view.post.creator_id}
             community={postRes.data.community_view.community}
             viewType={this.props.view}
             maxCommentsShown={this.state.maxCommentsShown}
-            postLocked={postRes.data.post_view.post.locked}
+            postLockedOrRemovedOrDeleted={postLockedDeletedOrRemoved(
+              postRes.data.post_view,
+            )}
             admins={siteRes.admins}
             readCommentsAt={
               postRes.data.post_view.post_actions?.read_comments_at
             }
+            showContext={false}
+            hideImages={false}
             allLanguages={siteRes.all_languages}
             siteLanguages={siteRes.discussion_languages}
             myUserInfo={this.isoData.myUserInfo}
             localSite={siteRes.site_view.local_site}
             onSaveComment={this.handleSaveComment}
             onBlockPerson={this.handleBlockPerson}
+            onBlockCommunity={this.handleBlockCommunity}
             onDeleteComment={this.handleDeleteComment}
             onRemoveComment={this.handleRemoveComment}
             onCommentVote={this.handleCommentVote}
@@ -993,33 +1016,23 @@ export class Post extends Component<PostRouteProps, PostState> {
     );
   }
 
-  commentTree(): CommentNodeI[] {
-    if (this.state.commentsRes.state === "success") {
-      const comments = this.state.commentsRes.data.comments;
-      if (comments.length) {
-        return buildCommentsTree(comments, !!getCommentIdFromProps(this.props));
-      }
-    }
-    return [];
-  }
-
   async handleCommentSortChange(i: Post, event: any) {
     const sort = event.target.value as CommentSortType;
-    const flattenable = sort === "New" || sort === "Old";
-    if (flattenable || i.props.view !== CommentViewType.Flat) {
+    const flattenable = sort === "new" || sort === "old";
+    if (flattenable || i.props.view !== "flat") {
       i.updateUrl({ sort });
     } else {
-      i.updateUrl({ sort, view: CommentViewType.Tree });
+      i.updateUrl({ sort, view: "tree" });
     }
   }
 
   handleCommentViewTypeChange(i: Post, event: any) {
-    const flattenable = i.props.sort === "New" || i.props.sort === "Old";
-    const view: CommentViewType = Number(event.target.value);
-    if (flattenable || view !== CommentViewType.Flat) {
+    const flattenable = i.props.sort === "new" || i.props.sort === "old";
+    const view: CommentViewType = event.target.value;
+    if (flattenable || view !== "flat") {
       i.updateUrl({ view });
     } else {
-      i.updateUrl({ view, sort: "New" });
+      i.updateUrl({ view, sort: "new" });
     }
   }
 
@@ -1027,22 +1040,24 @@ export class Post extends Component<PostRouteProps, PostState> {
     i.setState({ showSidebarMobile: !i.state.showSidebarMobile });
   }
 
-  handleViewAllComments(i: Post) {
+  handleViewAllComments(): string {
     const id =
-      getIdFromProps(i.props) ||
-      (i.state.postRes.state === "success" &&
-        i.state.postRes.data.post_view.post.id);
+      getIdFromProps(this.props) ||
+      (this.state.postRes.state === "success" &&
+        this.state.postRes.data.post_view.post.id);
     if (id) {
-      i.updateUrl({
+      const location = this.buildUrl({
         match: { params: { post_id: id.toString() } },
       });
+      return location.pathname + location.search;
     }
+    return ".";
   }
 
-  handleViewContext(i: Post) {
-    if (i.state.commentsRes.state === "success") {
-      const commentId = getCommentIdFromProps(i.props);
-      const commentView = i.state.commentsRes.data.comments.find(
+  handleViewContext(): string {
+    if (this.state.commentsRes.state === "success") {
+      const commentId = getCommentIdFromProps(this.props);
+      const commentView = this.state.commentsRes.data.comments.find(
         c => c.comment.id === commentId,
       );
 
@@ -1050,7 +1065,7 @@ export class Post extends Component<PostRouteProps, PostState> {
       const postId = commentView?.comment.post_id;
 
       if (parentId && postId) {
-        i.updateUrl({
+        const location = this.buildUrl({
           match: {
             params: {
               post_id: postId.toString(),
@@ -1058,8 +1073,10 @@ export class Post extends Component<PostRouteProps, PostState> {
             },
           },
         });
+        return location.pathname + location.search;
       }
     }
+    return ".";
   }
 
   async handleDeleteCommunityClick(form: DeleteCommunity) {
@@ -1114,16 +1131,18 @@ export class Post extends Component<PostRouteProps, PostState> {
   async handleBlockCommunity(form: BlockCommunity) {
     const blockCommunityRes = await HttpService.client.blockCommunity(form);
     if (blockCommunityRes.state === "success") {
-      updateCommunityBlock(blockCommunityRes.data, this.isoData.myUserInfo);
+      updateCommunityBlock(
+        blockCommunityRes.data,
+        form.block,
+        this.isoData.myUserInfo,
+      );
       this.setState(s => {
         if (s.postRes.state === "success" && this.isoData.myUserInfo) {
           const pv = s.postRes.data.post_view;
           if (!pv.community_actions) {
             pv.community_actions = {};
           }
-          pv.community_actions.blocked_at = nowBoolean(
-            blockCommunityRes.data.blocked,
-          );
+          pv.community_actions.blocked_at = nowBoolean(form.block);
         }
       });
     }
@@ -1132,7 +1151,11 @@ export class Post extends Component<PostRouteProps, PostState> {
   async handleBlockPerson(form: BlockPerson) {
     const blockPersonRes = await HttpService.client.blockPerson(form);
     if (blockPersonRes.state === "success") {
-      updatePersonBlock(blockPersonRes.data, this.isoData.myUserInfo);
+      updatePersonBlock(
+        blockPersonRes.data,
+        form.block,
+        this.isoData.myUserInfo,
+      );
     }
   }
 
@@ -1298,8 +1321,13 @@ export class Post extends Component<PostRouteProps, PostState> {
   }
 
   async handlePostEdit(form: EditPost) {
+    this.setState({ editLoading: true });
     const res = await HttpService.client.editPost(form);
     this.updatePost(res);
+    if (res.state === "success") {
+      toast(I18NextService.i18n.t("edited_post"));
+    }
+    this.setState({ editLoading: false });
     return res;
   }
 
@@ -1410,7 +1438,7 @@ export class Post extends Component<PostRouteProps, PostState> {
 
   async handleBanPerson(form: BanPerson) {
     const banRes = await HttpService.client.banPerson(form);
-    this.updateBan(banRes);
+    this.updateBan(banRes, form.ban);
     if (banRes.state === "success" && this.state.postRes.state === "success") {
       toast(
         I18NextService.i18n.t(
@@ -1481,7 +1509,7 @@ export class Post extends Component<PostRouteProps, PostState> {
     }
   }
 
-  updateBan(banRes: RequestState<BanPersonResponse>) {
+  updateBan(banRes: RequestState<PersonResponse>, banned: boolean) {
     // Maybe not necessary
     if (banRes.state === "success") {
       this.setState(s => {
@@ -1490,12 +1518,12 @@ export class Post extends Component<PostRouteProps, PostState> {
           s.postRes.data.post_view.creator.id ===
             banRes.data.person_view.person.id
         ) {
-          s.postRes.data.post_view.creator_banned = banRes.data.banned;
+          s.postRes.data.post_view.creator_banned = banned;
         }
         if (s.commentsRes.state === "success") {
           s.commentsRes.data.comments
             .filter(c => c.creator.id === banRes.data.person_view.person.id)
-            .forEach(c => (c.creator_banned = banRes.data.banned));
+            .forEach(c => (c.creator_banned = banned));
         }
         return s;
       });
@@ -1593,4 +1621,73 @@ export class Post extends Component<PostRouteProps, PostState> {
     // Update the moderators
     // TODO: update GetCommunityResponse?
   }
+}
+
+function postLockedDeletedOrRemoved(post_view: PostView): boolean {
+  return (
+    post_view.post.locked || post_view.post.deleted || post_view.post.removed
+  );
+}
+
+function commentsSlimToFlatNodes(
+  comments: CommentSlimView[],
+  postCreatorId: PersonId,
+  community: Community,
+): CommentNodeType[] {
+  return comments.map(c => {
+    return {
+      view: { comment_view: c, children: [], depth: 0 },
+      postCreatorId,
+      community,
+    };
+  });
+}
+
+function sortedFlatNodes(
+  comments: CommentSlimView[],
+  postCreatorId: PersonId,
+  community: Community,
+  sort: CommentSortType,
+): CommentNodeType[] {
+  const nodeToDate = (node: CommentNodeType) =>
+    node.view.comment_view.comment.published_at;
+  const nodes = commentsSlimToFlatNodes(comments, postCreatorId, community);
+  if (sort === "new") {
+    return nodes.sort((a, b) => compareDesc(nodeToDate(a), nodeToDate(b)));
+  } else {
+    return nodes.sort((a, b) => compareAsc(nodeToDate(a), nodeToDate(b)));
+  }
+}
+
+function commentTree(
+  comments: CommentSlimView[],
+  postCreatorId: PersonId,
+  community: Community,
+  commentIdFromProps: CommentId | undefined,
+): CommentNodeType[] {
+  if (comments.length) {
+    const tree = buildCommentsTree(comments, commentIdFromProps);
+    const treeNodes: CommentNodeType[] = tree.map(v => {
+      return { view: v, postCreatorId, community };
+    });
+    return treeNodes;
+  } else {
+    return [];
+  }
+}
+
+function showContextButton(
+  comments: CommentSlimView[],
+  postCreatorId: PersonId,
+  community: Community,
+  commentIdFromProps: CommentId | undefined,
+): boolean {
+  const firstComment = commentTree(
+    comments,
+    postCreatorId,
+    community,
+    commentIdFromProps,
+  ).at(0)?.view.comment_view.comment;
+  const depth = getDepthFromComment(firstComment);
+  return depth ? depth > 0 : false;
 }

@@ -1,15 +1,18 @@
 import { setIsoData } from "@utils/app";
-import { RouteDataResponse } from "@utils/types";
+import {
+  DirectionalCursor,
+  QueryParams,
+  RouteDataResponse,
+} from "@utils/types";
 import { Component } from "inferno";
 import {
-  FederatedInstances,
+  FederatedInstanceView,
+  GetFederatedInstancesKind,
   GetFederatedInstancesResponse,
   GetSiteResponse,
-  Instance,
   LemmyHttp,
 } from "lemmy-js-client";
-import classNames from "classnames";
-import { relTags } from "@utils/config";
+import { fetchLimit, relTags } from "@utils/config";
 import { InitialFetchRequest } from "@utils/types";
 import { FirstLoadService, I18NextService } from "../../services";
 import {
@@ -20,15 +23,42 @@ import {
   wrapClient,
 } from "../../services/HttpService";
 import { HtmlTags } from "../common/html-tags";
-import { Spinner } from "../common/icon";
-import Tabs from "../common/tabs";
+import { Icon, Spinner } from "../common/icon";
 import { getHttpBaseInternal } from "../../utils/env";
 import { RouteComponentProps } from "inferno-router/dist/Route";
 import { IRoutePropsWithFetch } from "@utils/routes";
-import { resourcesSettled } from "@utils/helpers";
+import {
+  cursorComponents,
+  getQueryParams,
+  getQueryString,
+  resourcesSettled,
+} from "@utils/helpers";
 import { scrollMixin } from "../mixins/scroll-mixin";
 import { isBrowser } from "@utils/browser";
 import { formatRelativeDate, isWeekOld } from "@utils/date";
+import { TableHr } from "@components/common/tables";
+import {
+  RadioOption,
+  RadioButtonGroup,
+} from "@components/common/radio-button-group";
+import { linkEvent } from "inferno";
+import { PaginatorCursor } from "@components/common/paginator-cursor";
+import { createRef } from "inferno";
+
+function getKindFromQuery(kind?: string): GetFederatedInstancesKind {
+  return kind ? (kind as GetFederatedInstancesKind) : "all";
+}
+
+export function getInstancesQueryParams(source?: string): InstancesProps {
+  return getQueryParams<InstancesProps>(
+    {
+      kind: getKindFromQuery,
+      cursor: (cursor?: string) => cursor,
+      domain_filter: (domain_filter?: string) => domain_filter,
+    },
+    source,
+  );
+}
 
 type InstancesData = RouteDataResponse<{
   federatedInstancesResponse: GetFederatedInstancesResponse;
@@ -40,17 +70,24 @@ interface InstancesState {
   isIsomorphic: boolean;
 }
 
+interface InstancesProps {
+  kind: GetFederatedInstancesKind;
+  cursor?: DirectionalCursor;
+  domain_filter?: string;
+}
+
 type InstancesRouteProps = RouteComponentProps<Record<string, never>> &
-  Record<string, never>;
+  InstancesProps;
 export type InstancesFetchConfig = IRoutePropsWithFetch<
   InstancesData,
   Record<string, never>,
-  Record<string, never>
+  InstancesProps
 >;
 
 @scrollMixin
 export class Instances extends Component<InstancesRouteProps, InstancesState> {
   private isoData = setIsoData<InstancesData>(this.context);
+  searchInput = createRef<HTMLInputElement>();
   state: InstancesState = {
     instancesRes: EMPTY_REQUEST,
     siteRes: this.isoData.siteRes,
@@ -63,6 +100,9 @@ export class Instances extends Component<InstancesRouteProps, InstancesState> {
 
   constructor(props: any, context: any) {
     super(props, context);
+
+    this.handleChange = this.handleChange.bind(this);
+    this.handlePageChange = this.handlePageChange.bind(this);
 
     // Only fetch the data if coming from another route
     if (FirstLoadService.isFirstLoad) {
@@ -80,24 +120,53 @@ export class Instances extends Component<InstancesRouteProps, InstancesState> {
     }
   }
 
+  componentDidUpdate(prevProps: InstancesRouteProps) {
+    if (
+      this.props.location.key !== prevProps.location.key &&
+      this.props.history.action !== "POP"
+    ) {
+      this.searchInput.current?.select();
+    }
+  }
+
+  componentDidMount() {
+    if (this.props.history.action !== "POP" || this.state.isIsomorphic) {
+      this.searchInput.current?.select();
+    }
+  }
+
   async fetchInstances() {
     this.setState({
       instancesRes: LOADING_REQUEST,
     });
 
     this.setState({
-      instancesRes: await HttpService.client.getFederatedInstances(),
+      instancesRes: await HttpService.client.getFederatedInstances({
+        kind: this.props.kind,
+        domain_filter: this.props.domain_filter,
+        ...cursorComponents(this.props.cursor),
+        limit: fetchLimit,
+      }),
     });
   }
 
   static async fetchInitialData({
     headers,
-  }: InitialFetchRequest): Promise<InstancesData> {
+    query: { kind, cursor, domain_filter },
+  }: InitialFetchRequest<
+    Record<string, never>,
+    InstancesProps
+  >): Promise<InstancesData> {
     const client = wrapClient(
       new LemmyHttp(getHttpBaseInternal(), { headers }),
     );
     return {
-      federatedInstancesResponse: await client.getFederatedInstances(),
+      federatedInstancesResponse: await client.getFederatedInstances({
+        kind: kind,
+        ...cursorComponents(cursor),
+        domain_filter,
+        limit: fetchLimit,
+      }),
     };
   }
 
@@ -118,30 +187,7 @@ export class Instances extends Component<InstancesRouteProps, InstancesState> {
       case "success": {
         const instances = this.state.instancesRes.data.federated_instances;
         return instances ? (
-          <div className="row">
-            <div className="col-lg-8">
-              <Tabs
-                tabs={["linked", "allowed", "blocked"]
-                  .filter(status => instances[status].length)
-                  .map((status: keyof FederatedInstances) => ({
-                    key: status,
-                    label: I18NextService.i18n.t(`${status}_instances`),
-                    getNode: isSelected => (
-                      <div
-                        role="tabpanel"
-                        className={classNames("tab-pane show", {
-                          active: isSelected,
-                        })}
-                      >
-                        {status === "blocked"
-                          ? this.itemList(instances[status], false)
-                          : this.itemList(instances[status])}
-                      </div>
-                    ),
-                  }))}
-              />
-            </div>
-          </div>
+          <InstanceList instances={instances} />
         ) : (
           <h5>No linked instance</h5>
         );
@@ -156,48 +202,154 @@ export class Instances extends Component<InstancesRouteProps, InstancesState> {
           title={this.documentTitle}
           path={this.context.router.route.match.url}
         />
+        {this.renderRadios()}
         {this.renderInstances()}
+        <PaginatorCursor
+          current={this.props.cursor}
+          resource={this.state.instancesRes}
+          onPageChange={this.handlePageChange}
+        />
       </div>
     );
   }
 
-  itemList(items: Instance[], link = true) {
-    return items.length > 0 ? (
-      <div className="table-responsive">
-        <table id="instances_table" className="table table-sm table-hover">
-          <thead className="pointer">
-            <tr>
-              <th>{I18NextService.i18n.t("name")}</th>
-              <th>{I18NextService.i18n.t("software")}</th>
-              <th>{I18NextService.i18n.t("version")}</th>
-              <th>{I18NextService.i18n.t("last_updated")}</th>
-            </tr>
-          </thead>
-          <tbody>
-            {items.map(i => (
-              <tr key={i.domain}>
-                <td>
-                  {link ? (
-                    <a href={`https://${i.domain}`} rel={relTags}>
-                      {i.domain}{" "}
-                    </a>
-                  ) : (
-                    <span>{i.domain}</span>
-                  )}
-                </td>
-                <td>{i.software}</td>
-                <td>{i.version}</td>
-                <td>
-                  {formatRelativeDate(i.updated_at ?? i.published_at)}
-                  {isWeekOld(new Date(i.updated_at ?? i.published_at)) && " 💀"}
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
+  handleChange(state: GetFederatedInstancesKind) {
+    this.updateUrl({ kind: state });
+    this.fetchInstances();
+  }
+
+  handlePageChange(cursor?: DirectionalCursor) {
+    this.updateUrl({ cursor });
+  }
+
+  updateUrl(state: Partial<InstancesProps>) {
+    const { kind, cursor, domain_filter } = { ...this.props, ...state };
+
+    const queryParams: QueryParams<InstancesProps> = {
+      kind,
+      cursor,
+      domain_filter,
+    };
+
+    this.props.history.push(`/instances${getQueryString(queryParams)}`);
+  }
+
+  renderRadios() {
+    const allStates: RadioOption[] = [
+      { value: "all", i18n: "all" },
+      { value: "linked", i18n: "linked_instances" },
+      { value: "allowed", i18n: "allowed_instances" },
+      { value: "blocked", i18n: "blocked_instances" },
+    ];
+    return (
+      <div className="row mb-2">
+        <RadioButtonGroup
+          className="col-auto"
+          allOptions={allStates}
+          currentOption={this.props.kind}
+          onClick={this.handleChange}
+        />
+        <div className="col" />
+        <form
+          className="d-flex col-auto align-self-end"
+          onSubmit={linkEvent(this, this.handleSearchSubmit)}
+        >
+          <input
+            name="q"
+            type="search"
+            className="form-control flex-initial"
+            placeholder={`${I18NextService.i18n.t("search")}...`}
+            aria-label={I18NextService.i18n.t("search")}
+            defaultValue={this.props.domain_filter}
+            ref={this.searchInput}
+          />
+          <button type="submit" className="btn btn-outline-secondary ms-1">
+            <Icon icon="search" />
+          </button>
+        </form>
       </div>
-    ) : (
-      <div>{I18NextService.i18n.t("none_found")}</div>
     );
   }
+  handleSearchSubmit(i: Instances, event: any) {
+    event.preventDefault();
+    let domain_filter: string | undefined =
+      i.searchInput.current?.value ?? i.props.domain_filter;
+    if (domain_filter === "") {
+      domain_filter = undefined;
+    }
+    i.updateUrl({ domain_filter });
+    i.fetchInstances();
+  }
+}
+
+interface InstanceListProps {
+  instances: FederatedInstanceView[];
+  hideNoneFound?: boolean;
+  onRemove?(instance: string): void;
+  cursor?: DirectionalCursor;
+}
+
+export function InstanceList({
+  instances,
+  hideNoneFound,
+  onRemove,
+}: InstanceListProps) {
+  const nameCols = "col-12 col-md-6";
+  const otherCols = "col-4 col-md-2";
+
+  return instances.length > 0 ? (
+    <div id="instances-table">
+      <div className="row">
+        <div className={`${nameCols} fw-bold`}>
+          {I18NextService.i18n.t("name")}
+        </div>
+        <div className={`${otherCols} fw-bold`}>
+          {I18NextService.i18n.t("software")}
+        </div>
+        <div className={`${otherCols} fw-bold`}>
+          {I18NextService.i18n.t("version")}
+        </div>
+        <div className={`${otherCols} fw-bold`}>
+          {I18NextService.i18n.t("last_updated")}
+        </div>
+      </div>
+      <TableHr />
+      {instances.map(i => (
+        <>
+          <div key={i.instance.domain} className="row">
+            <div className={nameCols}>
+              {!i.blocked ? (
+                <a href={`https://${i.instance.domain}`} rel={relTags}>
+                  {i.instance.domain}{" "}
+                </a>
+              ) : (
+                <span>{i.instance.domain}</span>
+              )}
+              {onRemove !== undefined && (
+                <button
+                  className="btn btn-link"
+                  onClick={() => onRemove(i.instance.domain)}
+                >
+                  <Icon icon={"x"} classes="icon-inline text-danger" />
+                </button>
+              )}
+            </div>
+            <div className={otherCols}>{i.instance.software}</div>
+            <div className={otherCols}>{i.instance.version}</div>
+            <div className={otherCols}>
+              {formatRelativeDate(
+                i.instance.updated_at ?? i.instance.published_at,
+              )}
+              {isWeekOld(
+                new Date(i.instance.updated_at ?? i.instance.published_at),
+              ) && " 💀"}
+            </div>
+          </div>
+          <hr />
+        </>
+      ))}
+    </div>
+  ) : (
+    !hideNoneFound && <div>{I18NextService.i18n.t("none_found")}</div>
+  );
 }
