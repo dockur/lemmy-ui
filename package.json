@@ -93,7 +93,7 @@
     "register-service-worker": "^1.7.2",
     "run-node-webpack-plugin": "^2.0.0",
     "rxjs": "^7.8.1",
-    "sanitize-html": "^2.13.0",
+    "sanitize-html": "^2.17.3",
     "sass": "^1.77.8",
     "sass-loader": "^16.0.1",
     "serialize-javascript": "^7.0.0",
