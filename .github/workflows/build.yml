@@ -144,7 +144,6 @@ jobs:
         run: |
           git config --global url.https://github.com/.insteadOf git://github.com/
           git clone --recurse-submodules -j8 ${{ env.remote }} --single-branch --branch ${{ env.latest_tag }}
-          cp Dockerfile.custom ${{ github.event.repository.name }}/Dockerfile
       -
         name: Build Docker image
         if: env.exists == 'false'
