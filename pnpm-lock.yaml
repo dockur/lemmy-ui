@@ -43,7 +43,7 @@ importers:
         version: 5.3.8(@popperjs/core@2.11.8)
       caniuse-lite:
         specifier: ^1.0.30001735
-        version: 1.0.30001791
+        version: 1.0.30001792
       check-password-strength:
         specifier: ^3.0.0
         version: 3.0.0
@@ -181,7 +181,7 @@ importers:
         version: 1.99.0
       sass-loader:
         specifier: ^16.0.1
-        version: 16.0.7(sass@1.99.0)(webpack@5.106.2)
+        version: 16.0.8(sass@1.99.0)(webpack@5.106.2)
       serialize-javascript:
         specifier: ^7.0.0
         version: 7.0.5
@@ -2034,8 +2034,8 @@ packages:
     resolution: {integrity: sha512-ksWePWBloaWPxJYQ8TL0JHvtci6G5QTKwQ95RcWAa/lzoAKuAOflGdAK92hpHXjkwb8zLxoLNUoNYZgVsaJzvQ==}
     engines: {node: '>=4'}
 
-  caniuse-lite@1.0.30001791:
-    resolution: {integrity: sha512-yk0l/YSrOnFZk3UROpDLQD9+kC1l4meK/wed583AXrzoarMGJcbRi2Q4RaUYbKxYAsZ8sWmaSa/DsLmdBeI1vQ==}
+  caniuse-lite@1.0.30001792:
+    resolution: {integrity: sha512-hVLMUZFgR4JJ6ACt1uEESvQN1/dBVqPAKY0hgrV70eN3391K6juAfTjKZLKvOMsx8PxA7gsY1/tLMMTcfFLLpw==}
 
   chalk@4.1.2:
     resolution: {integrity: sha512-oKnbhFyRIXpUuez8iBMmyEa4nbj4IOQyuhc/wy9kY7/WVPcwIO9VA668Pu8RkO7+0G76SLROeyw9CpQ061i4mA==}
@@ -4299,8 +4299,8 @@ packages:
   sanitize-html@2.17.3:
     resolution: {integrity: sha512-Kn4srCAo2+wZyvCNKCSyB2g8RQ8IkX/gQs2uqoSRNu5t9I2qvUyAVvRDiFUVAiX3N3PNuwStY0eNr+ooBHVWEg==}
 
-  sass-loader@16.0.7:
-    resolution: {integrity: sha512-w6q+fRHourZ+e+xA1kcsF27iGM6jdB8teexYCfdUw0sYgcDNeZESnDNT9sUmmPm3ooziwUJXGwZJSTF3kOdBfA==}
+  sass-loader@16.0.8:
+    resolution: {integrity: sha512-hcov4ZwZJIGbEuyNr9EmiTmZueyrxSToE6GOzoZnq5JM7ecRO7ttyvilPn+VmRsqiP16+VYZzVnGZj/hzZgKBA==}
     engines: {node: '>= 18.12.0'}
     peerDependencies:
       '@rspack/core': 0.x || ^1.0.0 || ^2.0.0-0
@@ -7170,7 +7170,7 @@ snapshots:
   browserslist@4.28.2:
     dependencies:
       baseline-browser-mapping: 2.10.19
-      caniuse-lite: 1.0.30001791
+      caniuse-lite: 1.0.30001792
       electron-to-chromium: 1.5.340
       node-releases: 2.0.37
       update-browserslist-db: 1.2.3(browserslist@4.28.2)
@@ -7222,7 +7222,7 @@ snapshots:
 
   callsites@2.0.0: {}
 
-  caniuse-lite@1.0.30001791: {}
+  caniuse-lite@1.0.30001792: {}
 
   chalk@4.1.2:
     dependencies:
@@ -9577,7 +9577,7 @@ snapshots:
       parse-srcset: 1.0.2
       postcss: 8.5.10
 
-  sass-loader@16.0.7(sass@1.99.0)(webpack@5.106.2):
+  sass-loader@16.0.8(sass@1.99.0)(webpack@5.106.2):
     dependencies:
       neo-async: 2.6.2
     optionalDependencies:
