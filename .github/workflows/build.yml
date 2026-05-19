@@ -70,6 +70,7 @@ jobs:
           [[ "${{ env.latest_tag }}" == *"beta"* ]] && beta="true"
           [[ "${{ env.latest_tag }}" == *"test"* ]] && beta="true" && val="true"
           [[ "${{ env.latest_tag }}" == *"alpha"* ]] && beta="true" && val="true"
+          [[ "${{ env.latest_tag }}" != *"0.19"* ]] && val="true"
 
           echo "beta=${beta}" >> $GITHUB_ENV
           echo "exists=${val}" >> $GITHUB_ENV
