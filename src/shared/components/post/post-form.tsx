@@ -780,6 +780,8 @@ const fetchSimilarPosts = debounce(async (i: PostForm) => {
     i.setState({
       suggestedPostsRes: await HttpService.client.getPosts({
         search_term,
+        search_title_only: true,
+        limit: 5,
         sort: "top",
         type_: "all",
         community_id: i.state.form.community_id,
@@ -1004,19 +1006,22 @@ async function handleImageUpload(
   i.setState({ imageLoading: true });
 
   if (file) {
-    await HttpService.client.uploadImage({ image: file }).then(res => {
-      if (res.state === "success") {
-        i.state.form.url = res.data.image_url;
-        i.setState({
-          imageLoading: false,
-          uploadedImage: res.data,
-        });
-      } else if (res.state === "failed") {
-        console.error(res.err.name);
-        toast(res.err.name, "danger");
-        i.setState({ imageLoading: false });
-      }
-    });
+    const res = await HttpService.client.uploadImage({ image: file });
+    if (res.state === "success") {
+      const url = res.data.image_url;
+      i.setState(prev => ({
+        ...prev,
+        form: {
+          ...prev.form,
+          url,
+        },
+        uploadedImage: res.data,
+      }));
+    } else if (res.state === "failed") {
+      console.error(res.err.name);
+      toast(res.err.name, "danger");
+    }
+    i.setState({ imageLoading: false });
   }
 }
 
