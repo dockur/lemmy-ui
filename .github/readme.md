@@ -55,7 +55,7 @@ The following environment variables can be used to configure lemmy-ui:
 | `LEMMY_UI_CUSTOM_HTML_HEADER`  | `string` |                  | Injects a custom script into `<head>`.                                              |
 
 ## Stars 🌟
-[![Stars](https://starchart.cc/dockur/lemmy-ui.svg?variant=adaptive)](https://starchart.cc/dockur/lemmy-ui)
+[![Stargazers](https://raw.githubusercontent.com/star-stats/stars/refs/heads/data/charts/dockur-lemmy-ui.svg)](https://github.com/dockur/lemmy-ui/stargazers)
 
 [build_url]: https://github.com/dockur/lemmy-ui/
 [hub_url]: https://hub.docker.com/r/dockurr/lemmy-ui/
