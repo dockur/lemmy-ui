@@ -12,7 +12,14 @@
 
 </div></h1>
 
-Multi-platform docker image of [Lemmy UI](https://github.com/LemmyNet/lemmy-ui), a link aggregator and forum for the fediverse.
+Docker image of [Lemmy UI](https://github.com/LemmyNet/lemmy-ui), a link aggregator and forum for the fediverse.
+
+## Features ✨
+
+- Runs the Lemmy web interface inside Docker
+- Provides the frontend for a Lemmy instance
+- Connects to a separate Lemmy backend
+- Works on both AMD64 and ARM64 systems
 
 ## Usage  🐳
 
