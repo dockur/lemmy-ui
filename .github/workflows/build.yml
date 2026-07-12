@@ -62,18 +62,12 @@ jobs:
         name: Finish when found
         run: |
           #!/bin/bash
-          beta="false"
-          
           val="${{ steps.checkTag.outputs.exists }}"
 
-          [[ "${{ env.latest_tag }}" == *"rc"* ]] && beta="true"
-          [[ "${{ env.latest_tag }}" == *"beta"* ]] && beta="true"
-          [[ "${{ env.latest_tag }}" == *"test"* ]] && beta="true" && val="true"
-          [[ "${{ env.latest_tag }}" == *"alpha"* ]] && beta="true" && val="true"
+          [[ "${{ env.latest_tag }}" =~ ^[0-9]+\.[0-9]+\.[0-9]+- ]] && val="true"
           [[ "${{ env.latest_tag }}" != *"0.19"* ]] && val="true"
 
-          echo "beta=${beta}" >> $GITHUB_ENV
-          echo "exists=${val}" >> $GITHUB_ENV
+          echo "exists=${val}" >> "$GITHUB_ENV"
       -
         name: Checkout
         if: env.exists == 'false'
