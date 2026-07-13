@@ -1,6 +1,6 @@
 # syntax=docker/dockerfile:1
 
-FROM node:26-trixie-slim AS builder
+FROM node:24-trixie-slim AS builder
 
 ARG TARGETARCH
 
@@ -62,7 +62,7 @@ RUN rm -rf ./node_modules/import-sort-parser-typescript
 RUN rm -rf ./node_modules/typescript
 RUN rm -rf ./node_modules/npm
 
-FROM node:26-trixie-slim AS runner
+FROM node:24-trixie-slim AS runner
 
 ARG TARGETARCH
 
