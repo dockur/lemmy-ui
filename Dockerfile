@@ -1,6 +1,6 @@
 # syntax=docker/dockerfile:1
 
-FROM node:current-slim AS builder
+FROM node:22-bookworm-slim AS builder
 
 ARG TARGETARCH
 
@@ -62,7 +62,7 @@ RUN rm -rf ./node_modules/import-sort-parser-typescript
 RUN rm -rf ./node_modules/typescript
 RUN rm -rf ./node_modules/npm
 
-FROM node:current-slim AS runner
+FROM node:22-bookworm-slim AS runner
 
 ARG TARGETARCH
 
@@ -73,7 +73,8 @@ RUN --mount=target=/var/lib/apt/lists,type=cache,sharing=locked \
     rm -f /etc/apt/apt.conf.d/docker-clean \
     && apt-get update \
     && apt-get -y --no-install-recommends install \
-           curl
+           curl \
+           tini
 
 COPY --from=builder --chown=node:node /usr/src/app/dist /app/dist
 COPY --from=builder --chown=node:node /usr/src/app/node_modules /app/node_modules
@@ -85,10 +86,11 @@ LABEL org.opencontainers.image.source="https://github.com/LemmyNet/lemmy-ui"
 LABEL org.opencontainers.image.licenses="AGPL-3.0-or-later"
 LABEL org.opencontainers.image.description="The official web app for Lemmy."
 
-HEALTHCHECK --interval=60s --start-period=10s --retries=2 --timeout=10s CMD curl -ILfSs http://localhost:1234/ > /dev/null || exit 1
+HEALTHCHECK --interval=60s --start-period=10s --retries=2 --timeout=10s \
+    CMD ["curl", "-ILfSs", "http://localhost:1234/"]
 
 USER node
 EXPOSE 1234
 WORKDIR /app
 
-CMD ["node", "dist/js/server.js"]
+ENTRYPOINT ["/usr/bin/tini", "--", "node", "dist/js/server.js"]
