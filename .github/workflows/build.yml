@@ -43,6 +43,7 @@ jobs:
           [ -z "$latest_tag" ] && echo "Tag not found!" && exit 1
           [[ "$latest_tag" == "null" ]] && echo "Tag not found!" && exit 1
           [[ "$latest_tag" = v* ]] && latest_tag="${latest_tag:1}"
+          latest_tag="0.19.19"
           echo "Found tag: \"${latest_tag}\""
           latest_version="${latest_tag%-*}"
           major="${latest_version%%.*}"
@@ -131,6 +132,7 @@ jobs:
         run: |
           git config --global url.https://github.com/.insteadOf git://github.com/
           git clone --recurse-submodules -j8 ${{ env.remote }} --single-branch --branch ${{ env.latest_tag }}
+          cp Dockerfile ${{ github.event.repository.name }}/Dockerfile
       -
         name: Build Docker image
         if: env.exists == 'false'
