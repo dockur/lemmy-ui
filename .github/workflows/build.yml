@@ -64,10 +64,12 @@ jobs:
         run: |
           #!/bin/bash
           val="${{ steps.checkTag.outputs.exists }}"
+          beta="false"
 
           [[ "${{ env.latest_tag }}" =~ ^[0-9]+\.[0-9]+\.[0-9]+- ]] && val="true"
           [[ "${{ env.latest_tag }}" != *"0.19"* ]] && val="true"
 
+          echo "beta=${beta}" >> "$GITHUB_ENV"
           echo "exists=${val}" >> "$GITHUB_ENV"
       -
         name: Checkout
