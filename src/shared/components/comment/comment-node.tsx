@@ -351,7 +351,7 @@ export class CommentNode extends Component<CommentNodeProps, CommentNodeState> {
                             id={id}
                             onVote={this.props.onCommentVote}
                             myUserInfo={this.props.myUserInfo}
-                            localSite={this.props.localSite}
+                            community={this.community}
                             subject={this.commentView.comment}
                             myVoteIsUpvote={myVoteIsUpvote}
                             disabled={userNotLoggedInOrBanned(
@@ -431,7 +431,7 @@ export class CommentNode extends Component<CommentNodeProps, CommentNodeState> {
               style={`border-left: var(--comment-border-width) ${moreRepliesBorderColor} solid !important`}
             >
               <button
-                className="btn btn-sm border-light-subtle text-muted"
+                className="btn btn-sm border-light-subtle text-muted ms-2"
                 onClick={() => handleFetchChildren(this)}
               >
                 {this.props.fetchChildrenLoading === id ? (

@@ -728,7 +728,6 @@ export class Post extends Component<PostRouteProps, PostState> {
                 </div>
                 <div className="col">
                   <div className="btn-group w-auto mb-2" role="group">
-                    <Icon icon="bell" classes="me-2" />
                     <PostNotificationsDropdown
                       currentOption={this.state.notifications}
                       onSelect={val => handleNotificationChange(this, val)}
@@ -1076,6 +1075,10 @@ export class Post extends Component<PostRouteProps, PostState> {
 
         comments.splice(foundCommentParentIndex + 1, 0, newComment);
       }
+      // Sync the refreshed post (count, edits) from the mutation response.
+      if (s.postRes.state === "success" && res.state === "success") {
+        s.postRes.data.post_view.post = res.data.comment_view.post;
+      }
       return s;
     });
     if (res.state === "failed") {
@@ -1106,6 +1109,10 @@ export class Post extends Component<PostRouteProps, PostState> {
           res.data.comment_view,
           s.commentsRes.data.items,
         );
+      }
+      // Sync the refreshed post (count, edits) from the mutation response.
+      if (s.postRes.state === "success" && res.state === "success") {
+        s.postRes.data.post_view.post = res.data.comment_view.post;
       }
       return s;
     });

@@ -1,6 +1,5 @@
 import {
   communityToChoice,
-  enableDownvotes,
   searchCommunities,
   fetchThemeList,
   searchUsers,
@@ -71,6 +70,7 @@ import { PostSortDropdown, CommentSortDropdown } from "../common/sort-dropdown";
 import Tabs from "../common/tabs";
 import { CommunityLink } from "../community/community-link";
 import { PersonListing } from "./person-listing";
+import { Invites } from "./invites";
 import { InitialFetchRequest } from "@utils/types";
 import TotpModal from "../common/modal/totp-modal";
 import { LoadingEllipses } from "../common/loading-ellipses";
@@ -398,6 +398,16 @@ export class Settings extends Component<SettingsRouteProps, SettingsState> {
               label: I18NextService.i18n.t("blocks"),
               getNode: s => this.blockCards(s),
             },
+            ...(this.isoData.siteRes.site_view.local_site.registration_mode ===
+            "require_invitation"
+              ? [
+                  {
+                    key: "invites",
+                    label: I18NextService.i18n.t("invites"),
+                    getNode: (s: boolean) => this.invitesTab(s),
+                  },
+                ]
+              : []),
           ]}
         />
       </div>
@@ -487,6 +497,27 @@ export class Settings extends Component<SettingsRouteProps, SettingsState> {
           </div>
         </div>
       )
+    );
+  }
+
+  invitesTab(isSelected: boolean) {
+    if (userNotLoggedInOrBanned(this.isoData.myUserInfo)) {
+      return null;
+    }
+    return (
+      <div
+        className={classNames("tab-pane", {
+          active: isSelected,
+        })}
+        role="tabpanel"
+        id="invites-tab-pane"
+      >
+        <div className="row">
+          <div className="col-12">
+            <Invites siteRes={this.isoData.siteRes} />
+          </div>
+        </div>
+      </div>
     );
   }
 
@@ -1058,21 +1089,19 @@ export class Settings extends Component<SettingsRouteProps, SettingsState> {
               />
             </div>
           </div>
-          {enableDownvotes(siteRes) && (
-            <div className="mb-3 row align-items-center">
-              <label className="col-sm-3 col-form-label">
-                {I18NextService.i18n.t("show_downvotes")}
-              </label>
-              <div className="col-sm-9">
-                <VoteShowDropdown
-                  currentOption={
-                    this.state.saveUserSettingsForm.show_downvotes ?? "show"
-                  }
-                  onSelect={val => handleShowDownvotesChange(this, val)}
-                />
-              </div>
+          <div className="mb-3 row align-items-center">
+            <label className="col-sm-3 col-form-label">
+              {I18NextService.i18n.t("show_downvotes")}
+            </label>
+            <div className="col-sm-9">
+              <VoteShowDropdown
+                currentOption={
+                  this.state.saveUserSettingsForm.show_downvotes ?? "show"
+                }
+                onSelect={val => handleShowDownvotesChange(this, val)}
+              />
             </div>
-          )}
+          </div>
           <div className="row mb-3">
             <div className="col">
               <FilterChipCheckbox
