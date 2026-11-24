@@ -93,8 +93,8 @@ importers:
         specifier: ^10.0.1
         version: 10.0.1
       i18next:
-        specifier: ^23.16.8
-        version: 23.16.8
+        specifier: ^26.3.4
+        version: 26.3.4(typescript@6.0.3)
       idna-uts46-hx:
         specifier: ^6.2.4
         version: 6.2.4
@@ -1980,6 +1980,7 @@ packages:
 
   '@unlazy/core@2.0.1':
     resolution: {integrity: sha512-zARfhkFhALS5EGdym22E8OrNSEbHDhG8XBUFHr8I435U7JnM8r4Y8g6I+utdKMrxJARcAJx7WGDUo/h9CntWCg==}
+    deprecated: 'Merged into unlazy. Install unlazy@3 and import from ''unlazy'' instead: https://unlazy.byjohann.dev/guide/migration'
 
   '@webassemblyjs/ast@1.14.1':
     resolution: {integrity: sha512-nuBEDgQfm1ccRp/8bCQrx1frohyufl4JlbMMZ4P1wpeOfDhF6FQkxZJ1b/e+PLwr6X1Nhw6OLme5usuBWYBvuQ==}
@@ -3135,8 +3136,13 @@ packages:
     resolution: {integrity: sha512-Y93lCzHYgGWdrJ66yIktxiaGULYc6oGiABxhcO5AufBeOyoIdZF7bIfLaOrbM0iGIOXQQgxxRrFEnb+Y6w1n4A==}
     engines: {node: '>=10.18'}
 
-  i18next@23.16.8:
-    resolution: {integrity: sha512-06r/TitrM88Mg5FdUXAKL96dJMzgqLE5dv3ryBAra4KCwD9mJ4ndOTS95ZuymIGoE+2hzfdaMak2X11/es7ZWg==}
+  i18next@26.3.4:
+    resolution: {integrity: sha512-pa7m0d7pBDqGHZxljT+WPFeyFgQ7P7SciPPo1tTqYuO0z4sqADYhwnBESmmGp/wEof1inwdls/k8ZgTg8rxFHA==}
+    peerDependencies:
+      typescript: ^5 || ^6
+    peerDependenciesMeta:
+      typescript:
+        optional: true
 
   iconv-lite@0.4.24:
     resolution: {integrity: sha512-v3MXnZAcvnywkTUEZomIActle7RXXeedOR31wwl7VlyoXO4Qi9arvSenNQWne1TcRwhCL1HwLI21bEqdpj8/rA==}
@@ -8414,9 +8420,9 @@ snapshots:
 
   hyperdyperid@1.2.0: {}
 
-  i18next@23.16.8:
-    dependencies:
-      '@babel/runtime': 7.29.10
+  i18next@26.3.4(typescript@6.0.3):
+    optionalDependencies:
+      typescript: 6.0.3
 
   iconv-lite@0.4.24:
     dependencies:
